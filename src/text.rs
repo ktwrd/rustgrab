@@ -26,6 +26,56 @@ pub enum Text {
     UnsupportedWayland,
 }
 
+pub struct LocaleValues
+{
+    pub Help: String,
+    pub Version: String,
+    pub Area: String,
+    pub Window: String,
+    pub Full: String,
+    pub File: String,
+    pub Mastodon: String,
+    pub Twitter: String,
+    pub Imgur: String,
+    pub TwitterAuth: String,
+    pub MastodonAuth: String
+}
+impl LocaleValues {
+    pub fn new() -> Self
+    {
+        Self {
+            Help: String::new(),
+            Version: String::new(),
+            Area: String::new(),
+            Window: String::new(),
+            Full: String::new(),
+            File: String::new(),
+            Mastodon: String::new(),
+            Twitter: String::new(),
+            Imgur: String::new(),
+            TwitterAuth: String::new(),
+            MastodonAuth: String::new()
+        }
+    }
+    pub fn generate(&mut self) -> &mut Self
+    {
+        let locators = YamlLoader::load_from_str(&loader()).unwrap();
+        let locator = &locators[0]["Help"].clone();
+        self.Help = locator["Help"].as_str().unwrap_or("<help>").clone().to_string();
+        self.Version = locator["Version"].as_str().unwrap_or("<version>").clone().to_string();
+        self.Area = locator["Area"].as_str().unwrap_or("<area>").clone().to_string();
+        self.Window = locator["Window"].as_str().unwrap_or("<window>").clone().to_string();
+        self.Full = locator["Full"].as_str().unwrap_or("<full>").clone().to_string();
+        self.File = locator["File"].as_str().unwrap_or("<file>").clone().to_string();
+        self.Mastodon = locator["Toot"].as_str().unwrap_or("<mastodon>").clone().to_string();
+        self.Twitter = locator["Tweet"].as_str().unwrap_or("<twitter>").clone().to_string();
+        self.Imgur = locator["Imgur"].as_str().unwrap_or("<imgur>").clone().to_string();
+        self.TwitterAuth = locator["Twitter"]["Auth"].as_str().unwrap_or("<twitter_auth>").clone().to_string();
+        self.MastodonAuth = locator["Mastodon"]["Auth"].as_str().unwrap_or("<mastodon_auth>").clone().to_string();
+        self
+    }
+}
+
 // Retrieves locale settings of the user using LC_CTYPE or LANG
 fn locale() -> String {
     match env::var("LC_CTYPE") {
