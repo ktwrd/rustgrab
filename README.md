@@ -33,10 +33,10 @@
 
 ## Features
 * Takes screenshots
-* Uploads to Twitter, Mastodon, and Imgur
+* Uploads to ~~Twitter, Mastodon~~, XBackbone, and Imgur
 * Saves screenshots to your Pictures
 * Notifications
-* GTK Dialog for entering a message with a tweet or toot
+* ~~GTK Dialog for entering a message with a tweet or toot~~ Planning to be re-written with Qt.
 * Designed with **Wayland** in mind
 
 ## Desktop support
@@ -48,11 +48,12 @@
 - Generic X11 DE **(with `scrot`)**
 
 #### Tested on
-- Ubuntu 18.10
-- Fedora 29
+- Debian Testing (2024/05/12)
 
 # How to Use
-#### Twitter
+All of this is going to be rewritten once everything is gutted out and replaced with more sustainable code.
+
+~~#### Twitter
 **This is a temporary measure for connecting to Twitter and will be changed in the future**  
 rustgrab uses the **Ruby** Twitter tool `t` for sending Tweets.
 For non-Flatpak users, you will need to manually install the tool.  
@@ -83,7 +84,7 @@ For users of any X11 desktop, you must use `scrot` for screenshotting with rustg
 #### Keybinding
 For GNOME Users, setup a custom keyboard shortcut in Settings, and if you want a custom keybinding (say to replace **Print Screen**), navigate to this Dconf setting to change a binding. `/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/`  
 For Plasma Users, you do you.  
-For any other desktop, you do you.
+For any other desktop, you do you.~~
 
 ## Language support
 * English
@@ -99,9 +100,10 @@ For any other desktop, you do you.
 * Português (Portuguese) by [@pillgp](https://twitter.com/pillgp)
 
 # Installation
-### Ubuntu/Debian dependencies
-**Ubuntu: Tested for 17.04/17.10/18.04/18.10**  
-**Debian: Tested for 9.5.0 and GNU/kFreeBSD**  
+Please take these dependencies with a grain of salt, I have only tested Debian Testing since that is what I run.
+
+### Debian dependencies
+**Debian: Tested for Trixie**
 `$ sudo apt install libgtk-3-dev libcairo2-dev libpango1.0-dev libgdk-pixbuf2.0-dev libatk1.0-dev libssl-dev libcurl4-openssl-dev libclang-dev build-essential`
 
 ### Arch Linux dependencies
@@ -123,7 +125,6 @@ For any other desktop, you do you.
 **NONE**, works out of the box.
 
 ## Installing from Flatpak
-**Only Tested on Fedora 29 using GNOME Wayland**  
 Use `pet.kate.rustgrab.json`
 
 ## Compiling from source
@@ -131,6 +132,12 @@ Use `pet.kate.rustgrab.json`
 2. `$ cargo install --path .`  
 
 # Changelog
+#### [0.7.3] - 2024-05-12
+- Update dependencies
+* Flatpak/Application ID renamed to pet.kate.rustgrab (from io.github.ShareXin)
+* Renamed ShareXin to rustgrab
+* Forked by ktwrd
+
 #### [0.7.2] - 2018-12-16
 - Makefile added
 - Proper App Icons!!
