@@ -38,7 +38,7 @@ fn notification(service: ServiceKind, notification: NotificationKind) -> String 
 // Sends a notification with notify-rust, when a status with an image or an image is sent/uploaded
 pub fn image_sent(service: ServiceKind, text: &str, img: &str) {
     let notification = match Notification::new()
-        .appname("ShareXin")
+        .appname("rustgrab")
         .summary(&notification(service, NotificationKind::Sent))
         .body(text)
         .icon(img)
@@ -63,7 +63,7 @@ pub fn image_sent(service: ServiceKind, text: &str, img: &str) {
 // Sends a notification when a status is sent
 pub fn message_sent(service: ServiceKind, text: &str) {
     let notification = match Notification::new()
-        .appname("ShareXin")
+        .appname("rustgrab")
         .summary(&notification(service, NotificationKind::Sent))
         .body(text)
         .show()
@@ -82,7 +82,7 @@ pub fn message_sent(service: ServiceKind, text: &str) {
 // Sends a notification when a status update didn't go through
 pub fn not_sent(service: ServiceKind) {
     if Notification::new()
-        .appname("ShareXin")
+        .appname("rustgrab")
         .summary(&notification(service, NotificationKind::SendFailure))
         .timeout(Timeout::Milliseconds(3000))
         .show()
@@ -96,7 +96,7 @@ pub fn not_sent(service: ServiceKind) {
 // Sends a notification with the error message as the body
 pub fn error(code: usize) {
     if Notification::new()
-        .appname("ShareXin")
+        .appname("rustgrab")
         .summary(&text::message(code))
         .timeout(Timeout::Milliseconds(3000))
         .show()
@@ -111,7 +111,7 @@ pub fn error(code: usize) {
 #[allow(dead_code)]
 pub fn debug(error: String) {
     if Notification::new()
-        .appname("ShareXin")
+        .appname("rustgrab")
         .summary(&error.to_string())
         .timeout(Timeout::Milliseconds(3000))
         .show()
