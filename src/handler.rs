@@ -55,6 +55,9 @@ pub fn runcfg(screenshot_kind: ScreenshotKind) {
     match crate::config::UserConfig::parse() {
         Ok(cfg) => {
             match cfg.default_target {
+                ImageTarget::XBackbone => {
+                    inner_handle(cfg.default_target, crate::handler::xbackbone::run(cfg, screenshot_kind));
+                },
                 ImageTarget::Imgur => {
                     inner_handle(cfg.default_target, crate::handler::imgur::run(cfg, screenshot_kind));
                 },
