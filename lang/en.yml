@@ -64,10 +64,10 @@ Error:
     35: Failed to read config location %s
     36: Config for %s has not been setup
     37: Error uploading to XBackbone
-    38: (XBackbone) Failed get response body.
+    38: Failed get response body.
     39: Received invalid response code from server %s
-    40: (XBackbone) Failed to parse response.
-    41: (XBackbone) Invalid message code
+    40: Failed to parse response body.
+    41: Invalid message code %s
     42: Failed to copy URL to clipboard
     43: Config file not found.
     44: Failed to attach image.
