@@ -1,11 +1,6 @@
-## Submit more languages using this [form](https://goo.gl/forms/rNx4yAB9KM2fDXDG3)
+# rustgrab
 
-# ShareXin
-
-![ShareXin](https://sharexin.github.io/img/ShareX_Still.png "sharexin tweet")
-
-[![GitHub Stars](https://img.shields.io/github/stars/thebitstick/ShareXin.svg?)](https://github.com/thebitstick/ShareXin)
-[![Crates.io](https://img.shields.io/crates/v/sharexin.svg)](https://crates.io/crates/sharexin)
+**Note:** This is a fork of [ShareXin](https://github.com/sharexin/sharexin)
 
 # Table of contents
 * [Requirements](#requirements)
@@ -33,7 +28,7 @@
 
 ## Requirements
 * Linux or BSD
-* `rustc` 1.31.0 (Rust 2018)
+* `rustc` 1.78.0 (Rust 2021)
 * `feh` (only need if `spectacle` is not installed or using GNOME)
 
 ## Features
@@ -59,32 +54,32 @@
 # How to Use
 #### Twitter
 **This is a temporary measure for connecting to Twitter and will be changed in the future**  
-ShareXin uses the **Ruby** Twitter tool `t` for sending Tweets.  
+rustgrab uses the **Ruby** Twitter tool `t` for sending Tweets.
 For non-Flatpak users, you will need to manually install the tool.  
-You don't need to directly interface with `t` in either Flatpak or Native, as ShareXin can call the tool directly for authenticating and tweeting.  
+You don't need to directly interface with `t` in either Flatpak or Native, as rustgrab can call the tool directly for authenticating and tweeting.
 
 To authenticate to Twitter:  
-`$ sharexin tweet auth`  
+`$ rustgrab tweet auth`
 And on Flatpak:  
-`$ flatpak run io.github.ShareXin tweet auth`
+`$ flatpak run pet.kate.rustgrab tweet auth`
 #### Mastodon
 **This is a temporary measure for connecting to Mastodon and will be changed in the future**  
-ShareXin uses the **Python** Mastodon tool `toot` for sending Toots.  
+rustgrab uses the **Python** Mastodon tool `toot` for sending Toots.
 For non-Flatpak users, you will need to manually install the tool.  
-You don't need to directly interface with `toot` in either Flatpak or Native, as ShareXin can call the tool directly for logging in and tooting.  
+You don't need to directly interface with `toot` in either Flatpak or Native, as rustgrab can call the tool directly for logging in and tooting.
 
 To login to your Mastodon instance:  
-`$ sharexin toot auth`  
+`$ rustgrab toot auth`
 And on Flatpak:  
-`$ flatpak run io.github.ShareXin toot auth`
+`$ flatpak run pet.kate.rustgrab toot auth`
 #### Imgur
-ShareXin uses its own API and App to upload to Imgur, so no external tool is necessary, and you do not need to setup your own API with Imgur to use it. **(if you do wish to change it, change [this line](https://github.com/ShareXin/ShareXin/blob/0c9bd4692a72e56eb8525cebed0e507321e7d341/src/imgur.rs#L30))**
+rustgrab uses its own API and App to upload to Imgur, so no external tool is necessary, and you do not need to setup your own API with Imgur to use it. **(if you do wish to change it, change [this line](https://github.com/ktwrd/rustgrab/blob/0c9bd4692a72e56eb8525cebed0e507321e7d341/src/imgur.rs#L30))**
 #### Screenshotting
 **Flatpak is currently limited to only GNOME**  
 For users of the GNOME Desktop (X11/Wayland), you should already have `GNOME Screenshot` installed by default, so you do not need to worry.  
 Unity, Budgie, and Cinnamon Desktop users are recommended to use `GNOME Screenshot` for the best experience, however none of these desktops have Wayland support, so any other tool mentioned can be used, such as `Spectacle` or `scrot`  
-For users of the Plasma (X11/Wayland) Desktop, you should have `Spectacle` installed in order to have the best experience with ShareXin.  
-For users of any X11 desktop, you must use `scrot` for screenshotting with ShareXin.
+For users of the Plasma (X11/Wayland) Desktop, you should have `Spectacle` installed in order to have the best experience with rustgrab.
+For users of any X11 desktop, you must use `scrot` for screenshotting with rustgrab.
 #### Keybinding
 For GNOME Users, setup a custom keyboard shortcut in Settings, and if you want a custom keybinding (say to replace **Print Screen**), navigate to this Dconf setting to change a binding. `/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/`  
 For Plasma Users, you do you.  
@@ -129,14 +124,11 @@ For any other desktop, you do you.
 
 ## Installing from Flatpak
 **Only Tested on Fedora 29 using GNOME Wayland**  
-Use `io.github.ShareXin.json`
+Use `pet.kate.rustgrab.json`
 
 ## Compiling from source
-1. `$ git clone https://github.com/ShareXin/ShareXin/`
+1. `$ git clone https://github.com/ktwrd/rustgrab/`
 2. `$ cargo install --path .`  
-
-**OR**  
-1. `$ cargo install sharexin`
 
 # Changelog
 #### [0.7.2] - 2018-12-16

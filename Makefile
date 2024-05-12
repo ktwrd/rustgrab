@@ -1,5 +1,5 @@
 PREFIX?=/usr/
-ID=io.github.ShareXin
+ID=pet.kate.rustgrab
 
 test:
 	RUST_BACKTRACE=1 cargo test
@@ -13,7 +13,7 @@ install: install-resources
 	cargo install --path . --force --root $(DESTDIR)$(PREFIX)
 
 tmp:
-	install data/tmpwrap /app/bin/sharexin-tmpwrap
+	install data/tmpwrap /app/bin/rustgrab-tmpwrap
 
 install-resources:
 	mkdir -p $(DESTDIR)$(PREFIX)/share/applications/

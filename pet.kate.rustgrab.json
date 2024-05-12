@@ -1,12 +1,12 @@
 {
-    "app-id":"io.github.ShareXin",
+    "app-id":"pet.kate.rustgrab",
     "runtime":"org.gnome.Platform",
     "runtime-version":"master",
     "sdk":"org.gnome.Sdk",
     "sdk-extensions":[
         "org.freedesktop.Sdk.Extension.rust-stable"
     ],
-    "command":"sharexin-tmpwrap",
+    "command":"rustgrab-tmpwrap",
     "tags": ["nightly"],
     "desktop-file-name-prefix": "(Nightly) ",
     "build-options":{
@@ -15,7 +15,7 @@
             "--share=network"
         ],
         "env":{
-            "CARGO_HOME":"/run/build/sharexin/cargo",
+            "CARGO_HOME":"/run/build/rustgrab/cargo",
             "DEBUG":"true"
         }
     },
@@ -107,7 +107,7 @@
             ]
         },
         {
-            "name":"sharexin",
+            "name":"rustgrab",
             "subdir":"rust",
             "buildsystem":"simple",
             "build-args":[
@@ -119,7 +119,7 @@
             "sources":[
                 {
                     "type":"git",
-                    "url":"https://github.com/ShareXin/ShareXin"
+                    "url":"https://github.com/ktwrd/rustgrab"
                 }
             ]
         }

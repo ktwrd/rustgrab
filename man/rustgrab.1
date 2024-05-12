@@ -1,14 +1,14 @@
 .hy
-.TH "sharexin" "1" "2018\-12\-14" "sharexin 0.7.2" ""
+.TH "rustgrab" "1" "2024\-05\-12" "rustgrab 0.7.2" ""
 .SH NAME
 .PP
-sharexin - ShareX for Linux and BSD
+rustgrab - Screenshot Utility made in Rust
 .SH SYNOPSIS
 .PP
-sharexin <options> [destination] [destination options/image options] [FILE]
+rustgrab <options> [destination] [destination options/image options] [FILE]
 .SH DESCRIPTION
 .PP
-sharexin is a simple ShareX-like tool for Linux and BSDs.
+rustgrab is a Screenshot Utility made in Rust, and it's a fork of ShareXin
 It allows you to send to Twitter,
 Mastodon, and Imgur. It allows you to create a screenshot or use a file and upload it.
 .SH OPTIONS
@@ -70,17 +70,17 @@ Authenticate with Mastodon
 .RE
 .SH EXAMPLES
 .TP
-.B sharexin toot
+.B rustgrab toot
 .RS
 .RE
-.B sharexin tweet full
+.B rustgrab tweet full
 .RS
 .RE
-.B sharexin toot area
+.B rustgrab toot area
 .RS
 .RE
-.B sharexin imgur file [FILE]
+.B rustgrab imgur --file [FILE]
 .fi
 .SH AUTHOR
 .PP
-sharexin is maintained by thebitstick
+rustgrab is maintained by ktwrd

@@ -1,18 +1,18 @@
 [package]
-name = "sharexin"
-version = "0.7.2"
-authors = ["TheBitStick <thebitstick@tfwno.gf>"]
-description = "ShareX for Linux and BSD"
-homepage = "https://sharexin.github.io"
-repository = "https://github.com/ShareXin/ShareXin"
+name = "rustgrab"
+version = "0.7.3"
+authors = ["Kate Ward <kate@dariox.club>"]
+description = "Screenshot Utility made in Rust"
+homepage = "https://github.com/ktwrd/rustgrab"
+repository = "https://github.com/ktwrd/rustgrab"
 keywords = ["twitter", "mastodon", "imgur", "gtk", "linux"]
 license = "GPL-3.0"
 include = ["lang/*", "Cargo.toml", "data/gtk/dialog.ui", "src/*"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 
 [[bin]]
-name = "sharexin"
+name = "rustgrab"
 path = "src/main.rs"
 
 [dependencies]

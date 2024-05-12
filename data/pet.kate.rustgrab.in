@@ -1,21 +1,21 @@
 [Desktop Entry]
 Version=1.0
-Name=ShareXin
-Exec=sharexin
-Icon=io.github.ShareXin
+Name=rustgrab
+Exec=rustgrab
+Icon=pet.kate.rustgrab
 Type=Application
-Comment=ShareX for Linux and BSD
+Comment=Screenshot Utility made in Rust
 Terminal=false
 Categories=GNOME;GTK;Network;
 Keywords=Twitter;Mastodon;Imgur;Screenshot;
 StartupNotify=true
-StartupWMClass=sharexin
+StartupWMClass=rustgrab
 Actions=Tweet;Toot;
 
 [Desktop Action Tweet]
-Exec=sharexin tweet
+Exec=rustgrab tweet
 Name=Tweet a message
 
 [Desktop Action Toot]
-Exec=sharexin toot
+Exec=rustgrab toot
 Name=Toot a message

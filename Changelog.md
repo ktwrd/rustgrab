@@ -1,3 +1,9 @@
+#### [0.7.3] - 2024-05-12
+- Update dependencies
+* Flatpak/Application ID renamed to pet.kate.rustgrab (from io.github.ShareXin)
+* Renamed ShareXin to rustgrab
+* Forked by ktwrd
+
 #### [0.6.4] - 2018-03-30
 - Wow this project keeps going
 - Added Portuguese translation

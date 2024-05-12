@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>pet.kate.rustgrab</id>
+  <launchable type="desktop-id">pet.kate.rustgrab.desktop</launchable>
+  <name>rustgrab</name>
+  <developer_name>ktwrd</developer_name>
+  <update_contact>kate@dariox.club</update_contact>
+  <project_license>GPL-3.0</project_license>
+  <metadata_license>CC0-1.0</metadata_license>
+  <content_rating type="oars-1.1" />
+  <summary>Screenshot Utility made in Rust</summary>
+
+  <description>
+    <p>
+      rustgrab is a fork of ShareXin with added support for uploading to Cloud Storage Providers.
+    </p>
+  </description>
+
+  <url type="homepage">https://github.com/ktwrd/rustgrab</url>
+  <url type="bugtracker">https://github.com/ktwrd/rustgrab/issues</url>
+</component>
+
+
+
+
+
+

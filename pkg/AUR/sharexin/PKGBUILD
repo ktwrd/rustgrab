@@ -1,17 +1,17 @@
 # Maintainer: TheBitStick <thebitstick@tfwno.gf>
 # Contributor: Rhys Kenwell <redrield+aur@gmail.com>
 
-pkgname=sharexin
+pkgname=rustgrab
 pkgver=r260.ec52dd5
 pkgrel=1
-pkgdesc="ShareX for Linux and BSD"
-url="https://github.com/ShareXin/ShareXin"
+pkgdesc="Screenshot Utility made in Rust"
+url="https://github.com/ktwrd/rustgrab"
 makedepends=('rust' 'curl' 'gtk3' 'gdk-pixbuf2' 'cairo' 'glib2' 'openssl' 'dbus' 'xcb-util')
 depends=('feh' 'imagemagick')
 arch=('x86_64')
 license=('GPL')
 sha256sums=('SKIP')
-source=("sharexin::git+https://github.com/ShareXin/ShareXin#branch=master")
+source=("rustgrab::git+https://github.com/ktwrd/rustgrab#branch=master")
 
 pkgver() {
     cd "$pkgname"
@@ -25,5 +25,5 @@ build() {
 
 package() {
     cd "$pkgname"
-    install -Dm755 "target/release/$pkgname" "$pkgdir/usr/bin/sharexin"
+    install -Dm755 "target/release/$pkgname" "$pkgdir/usr/bin/rustgrab"
 }
