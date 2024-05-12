@@ -53,36 +53,36 @@
 # How to Use
 All of this is going to be rewritten once everything is gutted out and replaced with more sustainable code.
 
-~~#### Twitter
-**This is a temporary measure for connecting to Twitter and will be changed in the future**  
+#### Twitter
+~~**This is a temporary measure for connecting to Twitter and will be changed in the future**
 rustgrab uses the **Ruby** Twitter tool `t` for sending Tweets.
 For non-Flatpak users, you will need to manually install the tool.  
-You don't need to directly interface with `t` in either Flatpak or Native, as rustgrab can call the tool directly for authenticating and tweeting.
+You don't need to directly interface with `t` in either Flatpak or Native, as rustgrab can call the tool directly for authenticating and tweeting.~~
 
-To authenticate to Twitter:  
+~~To authenticate to Twitter:
 `$ rustgrab tweet auth`
 And on Flatpak:  
-`$ flatpak run pet.kate.rustgrab tweet auth`
+`$ flatpak run pet.kate.rustgrab tweet auth`~~
 #### Mastodon
-**This is a temporary measure for connecting to Mastodon and will be changed in the future**  
+~~**This is a temporary measure for connecting to Mastodon and will be changed in the future**
 rustgrab uses the **Python** Mastodon tool `toot` for sending Toots.
 For non-Flatpak users, you will need to manually install the tool.  
-You don't need to directly interface with `toot` in either Flatpak or Native, as rustgrab can call the tool directly for logging in and tooting.
+You don't need to directly interface with `toot` in either Flatpak or Native, as rustgrab can call the tool directly for logging in and tooting.~~
 
-To login to your Mastodon instance:  
+~~To login to your Mastodon instance:  
 `$ rustgrab toot auth`
 And on Flatpak:  
-`$ flatpak run pet.kate.rustgrab toot auth`
+`$ flatpak run pet.kate.rustgrab toot auth`~~
 #### Imgur
-rustgrab uses its own API and App to upload to Imgur, so no external tool is necessary, and you do not need to setup your own API with Imgur to use it. **(if you do wish to change it, change [this line](https://github.com/ktwrd/rustgrab/blob/0c9bd4692a72e56eb8525cebed0e507321e7d341/src/imgur.rs#L30))**
+~~rustgrab uses its own API and App to upload to Imgur, so no external tool is necessary, and you do not need to setup your own API with Imgur to use it. **(if you do wish to change it, change [this line](https://github.com/ktwrd/rustgrab/blob/0c9bd4692a72e56eb8525cebed0e507321e7d341/src/imgur.rs#L30))**~~
 #### Screenshotting
-**Flatpak is currently limited to only GNOME**  
+~~**Flatpak is currently limited to only GNOME**
 For users of the GNOME Desktop (X11/Wayland), you should already have `GNOME Screenshot` installed by default, so you do not need to worry.  
 Unity, Budgie, and Cinnamon Desktop users are recommended to use `GNOME Screenshot` for the best experience, however none of these desktops have Wayland support, so any other tool mentioned can be used, such as `Spectacle` or `scrot`  
 For users of the Plasma (X11/Wayland) Desktop, you should have `Spectacle` installed in order to have the best experience with rustgrab.
-For users of any X11 desktop, you must use `scrot` for screenshotting with rustgrab.
+For users of any X11 desktop, you must use `scrot` for screenshotting with rustgrab.~~
 #### Keybinding
-For GNOME Users, setup a custom keyboard shortcut in Settings, and if you want a custom keybinding (say to replace **Print Screen**), navigate to this Dconf setting to change a binding. `/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/`  
+~~For GNOME Users, setup a custom keyboard shortcut in Settings, and if you want a custom keybinding (say to replace **Print Screen**), navigate to this Dconf setting to change a binding. `/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/`
 For Plasma Users, you do you.  
 For any other desktop, you do you.~~
 
@@ -134,9 +134,9 @@ Use `pet.kate.rustgrab.json`
 # Changelog
 #### [0.7.3] - 2024-05-12
 - Update dependencies
-* Flatpak/Application ID renamed to pet.kate.rustgrab (from io.github.ShareXin)
-* Renamed ShareXin to rustgrab
-* Forked by ktwrd
+- Flatpak/Application ID renamed to pet.kate.rustgrab (from io.github.ShareXin)
+- Renamed ShareXin to rustgrab
+- **[Forked by ktwrd](https://github.com/ktwrd/rustgrab)**
 
 #### [0.7.2] - 2018-12-16
 - Makefile added
