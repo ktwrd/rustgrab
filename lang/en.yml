@@ -65,7 +65,7 @@ Error:
     36: Config for %s has not been setup
     37: Error uploading to XBackbone
     38: (XBackbone) Failed get response body.
-    39: Received invalid response code from server.
+    39: Received invalid response code from server %s
     40: (XBackbone) Failed to parse response.
     41: (XBackbone) Invalid message code
     42: Failed to copy URL to clipboard

@@ -95,7 +95,7 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
         },
         _ => {
             eprintln!("handler.xbackbone.run->status {:#?}", status);
-            crate::notification::error(39);
+            crate::notification::error_msg(39, format!("{:#}", status));
             crate::text::exit();
         }
     }
