@@ -1,14 +1,23 @@
-use crate::{image, notification, text, ServiceKind};
+use crate::config::ImageTarget;
+use crate::{image, notification, text};
 use imgur;
 use open;
 use std::fs::File;
 use std::io::Read;
+use crate::helper::Error as LError;
 
-pub fn send() {
-    let tmp = image::temp_dir();
-
+pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKind)
+    -> Result<(), LError>{
+    
+    let location = config.generate_location()?;
+    
+    if crate::image::image_to_file(kind, location.clone()) == false {
+        eprintln!("{}", text::message(30));
+        return Ok(());
+    }
+    
     // Opens file for use
-    let mut file = match File::open(tmp.clone()) {
+    let mut file = match File::open(&location) {
         Ok(ok) => ok,
         Err(_) => {
             eprintln!("{}", text::message(28));
@@ -16,7 +25,7 @@ pub fn send() {
             text::exit()
         }
     };
-
+    
     // Stores image in a Vector
     let mut image = Vec::new();
     if file.read_to_end(&mut image).is_err() {
@@ -47,12 +56,16 @@ pub fn send() {
     }
 
     // Send notification
-    notification::image_sent(ServiceKind::Imgur, &copy_link, tmp.to_str().unwrap());
+    notification::image_sent(ImageTarget::Imgur, &copy_link, location.as_str());
 
     // Opens url
-    if open::that(copy_link).is_err() {
-        eprintln!("{}", text::message(19));
-        notification::error(19);
-        text::exit();
-    };
+    match open::that(copy_link) {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            eprintln!("{}", text::message(19));
+            eprintln!("{:#?}", e);
+            notification::error(19);
+            Err(LError::ErrorCode(19))
+        }
+    }
 }

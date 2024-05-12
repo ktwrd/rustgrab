@@ -1,14 +1,20 @@
 use clap::ArgMatches;
 use screenshot_rs::ScreenshotKind;
 use crate::{
+    text,
     MessageKind,
     dialog,
     image,
-    ServiceKind
+    config::ImageTarget
 };
+use crate::helper::Error as LError;
+
+pub mod xbackbone;
+pub mod imgur;
+pub mod filesystem;
 
 
-pub fn run(service: ServiceKind,
+pub fn run(service: ImageTarget,
                     create_file_when_none: bool,
                     target_file: Option<String>,
                     sceenshot_kind: Option<ScreenshotKind>)
@@ -36,6 +42,43 @@ pub fn run(service: ServiceKind,
     };
 
     dialog::dialog(service, message_kind);
+}
+
+pub fn runcfg(screenshot_kind: ScreenshotKind) {
+    let location = crate::config::UserConfig::get_config_location();
+    if std::path::Path::new(location.as_str()).exists() == false{
+        eprintln!("{} {}", text::message(43), location);
+        crate::notification::error(43);
+        crate::text::exit();
+    }
+    println!("location: {}", location);
+    match crate::config::UserConfig::parse() {
+        Ok(cfg) => {
+            match cfg.default_target {
+                ImageTarget::Imgur => {
+                    inner_handle(cfg.default_target, crate::handler::imgur::run(cfg, screenshot_kind));
+                },
+
+                // handle stuff that we haven't, and let the user know.
+                _ => {
+                    crate::notification::error_msg(45, format!("{:#?}", cfg.default_target));
+                }
+            };
+        },
+        Err(e) => {
+            crate::notification::error_body(46, format!("{:#?}", e));
+            panic!("Failed to get config.\n{:#?}", e);
+        }
+    }
+}
+fn inner_handle(target: ImageTarget, res: Result<(), LError>) {
+    match res {
+        Ok(_) => {},
+        Err(e) => {
+            crate::notification::error(0);
+            panic!("Failed to run {:#?}. {:#?}", target, e);
+        }
+    }
 }
 
 pub fn arg_to_kind(matches: &ArgMatches) -> Option<ScreenshotKind>

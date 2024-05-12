@@ -10,6 +10,12 @@ Notification:
     Not_Sent:
         Mastodon: Toot not sent
         Twitter: Tweet not sent
+    Clipboard:
+        Copy:
+            Filesystem: Copied Image to clipboard
+            Mastodon: Copied Toot link to clipboard
+            Twitter: Copied Tweet link to clipboard
+            XBackbone: Copied link to clipboard
 Update:
     Installed: Installed Version
     Latest: Latest Version
@@ -52,6 +58,21 @@ Error:
     29: Folder exists
     30: File not saved
     31: Unable to display system tray icon
+    32: Failed to unwrap base config location
+    33: Failed to unwrap final config location
+    34: Failed to get fallback directory from %s
+    35: Failed to read config location %s
+    36: Config for %s has not been setup
+    37: Error uploading to XBackbone
+    38: (XBackbone) Failed get response body.
+    39: Received invalid response code from server.
+    40: (XBackbone) Failed to parse response.
+    41: (XBackbone) Invalid message code
+    42: Failed to copy URL to clipboard
+    43: Config file not found.
+    44: Failed to attach image.
+    45: Target %s has not been implemented.
+    46: Failed to parse config.
 Help:
     Usage: Usage
     Options: Options
@@ -68,6 +89,7 @@ Help:
     Toot: Upload to Mastodon
     Tweet: Upload to Twitter
     Imgur: Upload to Imgur
+    DefaultAction: Default Action specified in config (~/.config/rustgrab/config.json)
     Twitter:
         Options: Twitter Options
         Auth: Authenticate with Twitter

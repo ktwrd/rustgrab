@@ -1,8 +1,8 @@
-use crate::{image, notification, text, ServiceKind};
+use crate::{image, notification, text, config::ImageTarget};
 use std::process::Command;
 
 pub fn image(status: String) {
-    let service = ServiceKind::Mastodon;
+    let service = ImageTarget::Mastodon;
 
     let tmp = image::temp_dir();
     let temp = tmp.to_str().unwrap().clone();
@@ -31,7 +31,7 @@ pub fn image(status: String) {
 }
 
 pub fn toot(status: String) {
-    let service = ServiceKind::Mastodon;
+    let service = ImageTarget::Mastodon;
 
     // Calls the "toot" Python app and send a status
     let toot = match Command::new("toot").args(&["post", &status]).status() {

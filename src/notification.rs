@@ -1,47 +1,82 @@
-use crate::{text, ServiceKind};
+use crate::config::ImageTarget;
+use crate::{text};
 use notify_rust::{Notification, Timeout};
 use std::fs;
 use std::{thread, time};
 use yaml_rust::YamlLoader;
 
-enum NotificationKind {
+#[derive(Debug, Clone, Copy, serde::Deserialize, serde::Serialize)]
+pub enum NotificationKind {
     Sent,
     SendFailure,
+    FileCopy,
+    ClipboardCopy
 }
 
-fn notification(service: ServiceKind, notification: NotificationKind) -> String {
+fn notification(service: ImageTarget, notification: NotificationKind) -> String {
     // Gets section of localization file for Notifications
     let mut locator = &YamlLoader::load_from_str(&text::loader()).unwrap()[0]["Notification"];
 
     // Checks kind of notification and the kind of service (Twitter, Mastodon, Imgur) used
-    match notification {
+    match &notification {
         NotificationKind::Sent => {
             locator = &locator["Sent"];
             match service {
-                ServiceKind::Twitter => locator = &locator["Twitter"],
-                ServiceKind::Mastodon => locator = &locator["Mastodon"],
-                ServiceKind::Imgur => locator = &locator["Imgur"],
+                ImageTarget::Twitter => locator = &locator["Twitter"],
+                ImageTarget::Mastodon => locator = &locator["Mastodon"],
+                ImageTarget::Imgur => locator = &locator["Imgur"],
+                _ => unreachable!("ImageTarget {:#?} is not supported for {:#?}", service, notification)
             }
         }
         NotificationKind::SendFailure => {
             locator = &locator["Not_Sent"];
             match service {
-                ServiceKind::Twitter => locator = &locator["Twitter"],
-                ServiceKind::Mastodon => locator = &locator["Mastodon"],
-                ServiceKind::Imgur => locator = &locator["Imgur"],
+                ImageTarget::Twitter => locator = &locator["Twitter"],
+                ImageTarget::Mastodon => locator = &locator["Mastodon"],
+                ImageTarget::Imgur => locator = &locator["Imgur"],
+                _ => unreachable!("ImageTarget {:#?} is not supported for {:#?}", service, notification)
+            }
+        },
+        NotificationKind::FileCopy => {
+            locator = &locator["Clipboard"]["Copy"]["Filesystem"];
+        },
+        NotificationKind::ClipboardCopy => {
+            locator = &locator["Clipboard"]["Copy"];
+            match service {
+                ImageTarget::Twitter => locator = &locator["Twitter"],
+                ImageTarget::Mastodon => locator = &locator["Mastodon"],
+                ImageTarget::Imgur => locator = &locator["Imgur"],
+                ImageTarget::XBackbone => locator = &locator["XBackbone"],
+                _ => unreachable!("ImageTarget {:#?} is not supported for {:#?}", service, notification)
             }
         }
     }
     return format!("{}", locator.as_str().unwrap());
 }
+pub fn display(service: ImageTarget, notif_kind: NotificationKind) {
+    let notification = match Notification::new()
+        .appname("rustgrab")
+        .summary(&notification(service, notif_kind))
+        .show()
+    {
+        Ok(ok) => ok,
+        Err(_) => {
+            eprintln!("{}", text::message(23));
+            return;
+        }
+    };
+
+    thread::sleep(time::Duration::from_secs(3));
+    notification.close();
+}
 
 // Sends a notification with notify-rust, when a status with an image or an image is sent/uploaded
-pub fn image_sent(service: ServiceKind, text: &str, img: &str) {
+pub fn image_sent(service: ImageTarget, text: &str, img: &str) {
     let notification = match Notification::new()
         .appname("rustgrab")
         .summary(&notification(service, NotificationKind::Sent))
         .body(text)
-        .icon(img)
+        .icon(&img)
         .show()
     {
         Ok(ok) => ok,
@@ -52,7 +87,7 @@ pub fn image_sent(service: ServiceKind, text: &str, img: &str) {
     };
 
     // Removes temporary file
-    if fs::remove_file(img.clone()).is_err() {
+    if fs::remove_file(img).is_err() {
         return;
     };
 
@@ -61,7 +96,7 @@ pub fn image_sent(service: ServiceKind, text: &str, img: &str) {
 }
 
 // Sends a notification when a status is sent
-pub fn message_sent(service: ServiceKind, text: &str) {
+pub fn message_sent(service: ImageTarget, text: &str) {
     let notification = match Notification::new()
         .appname("rustgrab")
         .summary(&notification(service, NotificationKind::Sent))
@@ -80,7 +115,7 @@ pub fn message_sent(service: ServiceKind, text: &str) {
 }
 
 // Sends a notification when a status update didn't go through
-pub fn not_sent(service: ServiceKind) {
+pub fn not_sent(service: ImageTarget) {
     if Notification::new()
         .appname("rustgrab")
         .summary(&notification(service, NotificationKind::SendFailure))
@@ -98,6 +133,33 @@ pub fn error(code: usize) {
     if Notification::new()
         .appname("rustgrab")
         .summary(&text::message(code))
+        .timeout(Timeout::Milliseconds(3000))
+        .show()
+        .is_err()
+    {
+        eprintln!("{}", text::message(23));
+        return;
+    };
+}
+pub fn error_msg(code: usize, msg: String) {
+    let summary = text::message(code)
+        .replace("%s", msg.as_str());
+    if Notification::new()
+        .appname("rustgrab")
+        .summary(&summary)
+        .timeout(Timeout::Milliseconds(5000))
+        .show()
+        .is_err()
+    {
+        eprintln!("{}", text::message(23));
+        return;
+    };
+}
+pub fn error_body(code: usize, body: String) {
+    if Notification::new()
+        .appname("rustgrab")
+        .summary(&text::message(code))
+        .body(&body)
         .timeout(Timeout::Milliseconds(3000))
         .show()
         .is_err()

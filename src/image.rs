@@ -7,15 +7,25 @@ use std::path::PathBuf;
 use std::{env, fs, path};
 use chrono::Local;
 
+/// Take a screenshot and write it to the location provided.
+/// Returns if the file exists or not.
+pub fn image_to_file(kind: ScreenshotKind, location: String) -> bool {
+    // Matches the kind of screenshot to functions in the screenshot-rs library
+    match kind {
+        ScreenshotKind::Area => screenshot_rs::screenshot_area(location.clone(), true),
+        ScreenshotKind::Window => screenshot_rs::screenshot_window(location.clone()),
+        ScreenshotKind::Full => screenshot_rs::screenshot_full(location.clone()),
+    };
+    std::path::Path::new(location.as_str()).exists()
+}
+
 pub fn image(kind: ScreenshotKind) {
     let tmp = temp_dir();
     let temp = tmp.to_str().unwrap().to_string();
 
-    // Matches the kind of screenshot to functions in my screenshot-rs library
-    match kind {
-        ScreenshotKind::Area => screenshot_rs::screenshot_area(temp, true),
-        ScreenshotKind::Window => screenshot_rs::screenshot_window(temp),
-        ScreenshotKind::Full => screenshot_rs::screenshot_full(temp),
+    if image_to_file(kind, temp) == false {
+        eprintln!("{}", text::message(30));
+        text::exit();
     }
 
     // If the temporary file sent to screenshot_rs doesn't exist (means the screenshot wasn't made), then exit

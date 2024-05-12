@@ -1,15 +1,12 @@
-use crate::{image, mastodon, text, twitter, MessageKind, ServiceKind};
+use crate::{image, mastodon, twitter, MessageKind, config::ImageTarget};
 use egg_mode_text;
 use gdk;
-use gtk::prelude::{ApplicationExt, ApplicationExtManual, GtkApplicationExt};
 use glib;
 use gtk;
 use gtk::prelude::{
-    ButtonExt, GtkWindowExt, HeaderBarExt, LabelExt, TextBufferExt,
+    ApplicationExt, ApplicationExtManual,
+    ButtonExt, GtkWindowExt, HeaderBarExt, LabelExt,
     WidgetExt, BuilderExtManual, WidgetExtManual,
-};
-use gtk::{
-    TextBuffer
 };
 use std::env;
 use gtk::gio::ApplicationFlags;
@@ -37,13 +34,13 @@ macro_rules! clone {
         }
     );
 }
-pub fn dialog(service: ServiceKind, message: MessageKind) {
+pub fn dialog(service: ImageTarget, message: MessageKind) {
     let application =
         gtk::Application::new(Some("pet.kate.rustgrab"), ApplicationFlags::NON_UNIQUE);
     glib::set_prgname(Some("rustgrab"));
     application.connect_startup(move |app| {
         // Creates variables for objects in Glade GTK file
-        let mut builder = gtk::Builder::new();
+        let builder = gtk::Builder::new();
         builder.add_from_string(include_str!("../data/gtk/dialog.ui")).expect("Failed to include dialog");
         let window: gtk::Window = builder.object("window").unwrap();
         let header: gtk::HeaderBar = builder.object("header").unwrap();
@@ -57,18 +54,19 @@ pub fn dialog(service: ServiceKind, message: MessageKind) {
 
         // Set Headerbar Subtitle and Default Character Count Label
         match service {
-            ServiceKind::Twitter => {
+            ImageTarget::Twitter => {
                 header.set_subtitle(Some("Twitter"));
                 match message {
                     MessageKind::Image => count.set_label(&TWITTER_IMAGE_COUNT.to_string()),
                     MessageKind::Text => count.set_label(&TWITTER_COUNT.to_string()),
                 };
             }
-            ServiceKind::Mastodon => {
+            ImageTarget::Mastodon => {
                 header.set_subtitle(Some("Mastodon"));
                 count.set_label(&MASTODON_COUNT.to_string());
             }
-            ServiceKind::Imgur => unreachable!("Imgur does not open a GTK dialog"),
+            ImageTarget::Imgur => unreachable!("Imgur does not open a GTK dialog"),
+            _ => unreachable!("Unsupported ImageTarget {:#?}", service)
         }
 
         // If user is not sending an image, then remove view screenshot button, and disallow user to send
@@ -119,7 +117,7 @@ pub fn dialog(service: ServiceKind, message: MessageKind) {
             // then decides what to do with the status
             // Creates thread to be able to close the GTK window while sending status/image
             match service {
-                ServiceKind::Twitter => match message {
+                ImageTarget::Twitter => match message {
                     MessageKind::Image => {
                             glib::idle_add(move || {
                                 twitter::image(status.clone());
@@ -137,7 +135,7 @@ pub fn dialog(service: ServiceKind, message: MessageKind) {
                         }
                     }
                 },
-                ServiceKind::Mastodon => match message {
+                ImageTarget::Mastodon => match message {
                     MessageKind::Image => {
                             glib::idle_add(move || {
                                 mastodon::image(status.clone());
@@ -155,7 +153,8 @@ pub fn dialog(service: ServiceKind, message: MessageKind) {
                         }
                     }
                 },
-                ServiceKind::Imgur => unreachable!("Imgur does not open a GTK dialog"),
+                ImageTarget::Imgur => unreachable!("Imgur does not open a GTK dialog"),
+                _ => unreachable!("Unsupported ImageTarget {:#?}", service)
             }
         }));
 
@@ -174,7 +173,7 @@ pub fn dialog(service: ServiceKind, message: MessageKind) {
 
         match message {
             MessageKind::Image => match service {
-                ServiceKind::Twitter => {
+                ImageTarget::Twitter => {
                     if status_count <= 20 && status_count >= 0 {
                         count.set_markup(&hit);
                     } else if status_count < 0 {
@@ -183,17 +182,18 @@ pub fn dialog(service: ServiceKind, message: MessageKind) {
                         count.set_label(&status_count.to_string());
                     }
                 }
-                ServiceKind::Mastodon => {
+                ImageTarget::Mastodon => {
                     if status_count < 0 {
                         count.set_markup(&limit);
                     } else {
                         count.set_label(&status_count.to_string());
                     }
                 }
-                ServiceKind::Imgur => unreachable!("Imgur does not open a GTK dialog"),
+                ImageTarget::Imgur => unreachable!("Imgur does not open a GTK dialog"),
+                _ => unreachable!("Unsupported ImageTarget {:#?}", service)
             },
             MessageKind::Text => match service {
-                ServiceKind::Twitter => {
+                ImageTarget::Twitter => {
                     if status_count >= TWITTER_COUNT || status_count < 0 {
                         send.set_sensitive(false);
                     } else {
@@ -207,7 +207,7 @@ pub fn dialog(service: ServiceKind, message: MessageKind) {
                         count.set_label(&status_count.to_string());
                     }
                 }
-                ServiceKind::Mastodon => {
+                ImageTarget::Mastodon => {
                     if status_count >= MASTODON_COUNT || status_count < 0 {
                         send.set_sensitive(false);
                     } else {
@@ -219,7 +219,8 @@ pub fn dialog(service: ServiceKind, message: MessageKind) {
                         count.set_label(&status_count.to_string());
                     }
                 }
-                ServiceKind::Imgur => unreachable!("Imgur does not open a GTK dialog"),
+                ImageTarget::Imgur => unreachable!("Imgur does not open a GTK dialog"),
+                _ => unreachable!("Unsupported ImageTarget {:#?}", service)
             },
         };
         glib::Propagation::Proceed
@@ -250,9 +251,9 @@ pub fn dialog(service: ServiceKind, message: MessageKind) {
 }
 
 // Character count using egg_mode_text as a representation of Twitter's character count
-fn char_count(service: ServiceKind, status: String, message: MessageKind) -> i32 {
+fn char_count(service: ImageTarget, status: String, message: MessageKind) -> i32 {
     let remaining = match service {
-        ServiceKind::Twitter => match message {
+        ImageTarget::Twitter => match message {
             MessageKind::Image => {
                 TWITTER_IMAGE_COUNT
                     - egg_mode_text::character_count(&status, URL_COUNT, URL_COUNT) as i32
@@ -261,10 +262,11 @@ fn char_count(service: ServiceKind, status: String, message: MessageKind) -> i32
                 TWITTER_COUNT - egg_mode_text::character_count(&status, URL_COUNT, URL_COUNT) as i32
             }
         },
-        ServiceKind::Mastodon => {
+        ImageTarget::Mastodon => {
             MASTODON_COUNT - egg_mode_text::character_count(&status, URL_COUNT, URL_COUNT) as i32
         }
-        ServiceKind::Imgur => unreachable!("Imgur does not open a GTK dialog"),
+        ImageTarget::Imgur => unreachable!("Imgur does not open a GTK dialog"),
+        _ => unreachable!("Unsupported ImageTarget {:#?}", service)
     };
     return remaining;
 }

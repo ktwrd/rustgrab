@@ -1,11 +1,11 @@
-use crate::{image, notification, text, ServiceKind};
+use crate::{image, notification, text, config::ImageTarget};
 use std::process::Command;
 
 pub fn image(status: String) {
-    let service = ServiceKind::Twitter;
+    let service = ImageTarget::Twitter;
 
     let tmp = image::temp_dir();
-    let temp = tmp.to_str().unwrap().clone();
+    let temp = tmp.to_str().unwrap();
 
     // Calls the "t" Ruby app and sends a staus with an image
     let t = match Command::new("t")
@@ -31,7 +31,7 @@ pub fn image(status: String) {
 }
 
 pub fn tweet(status: String) {
-    let service = ServiceKind::Twitter;
+    let service = ImageTarget::Twitter;
 
     // Calls the "t" Ruby app and sends a staus
     let t = match Command::new("t").args(&["update", &status]).status() {

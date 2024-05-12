@@ -2,7 +2,7 @@ use std::{env, process};
 use yaml_rust::YamlLoader;
 
 #[allow(dead_code)]
-pub enum Errors {
+pub enum ErrorCodenames {
     GtkInitError,
     ScreenshotUnsuccessful,
     StrfTimeUnavailable,
@@ -12,13 +12,20 @@ pub enum Errors {
     FileError,
     ImgurUploadFailure,
     ClipboardUnavailable,
+
     MastodonImageUnsuccessful,
     MastodonTootUnsuccessful,
     MastodonLoginError,
+
     TwitterImageUnsuccessful,
     TwitterTweetUnsucessful,
     TwitterLoginError,
+
     NotificationUnavailable,
+
+    UnwrapBaseConfigLocation,
+    UnwrapFinalConfigLocation,
+    FallbackDirectoryFail
 }
 
 #[allow(dead_code)]
@@ -38,7 +45,8 @@ pub struct LocaleValues
     pub Twitter: String,
     pub Imgur: String,
     pub TwitterAuth: String,
-    pub MastodonAuth: String
+    pub MastodonAuth: String,
+    pub DefaultAction: String
 }
 impl LocaleValues {
     pub fn new() -> Self
@@ -54,7 +62,8 @@ impl LocaleValues {
             Twitter: String::new(),
             Imgur: String::new(),
             TwitterAuth: String::new(),
-            MastodonAuth: String::new()
+            MastodonAuth: String::new(),
+            DefaultAction: String::new()
         }
     }
     pub fn generate(&mut self) -> &mut Self
@@ -72,6 +81,7 @@ impl LocaleValues {
         self.Imgur = locator["Imgur"].as_str().unwrap_or("<imgur>").clone().to_string();
         self.TwitterAuth = locator["Twitter"]["Auth"].as_str().unwrap_or("<twitter_auth>").clone().to_string();
         self.MastodonAuth = locator["Mastodon"]["Auth"].as_str().unwrap_or("<mastodon_auth>").clone().to_string();
+        self.DefaultAction = locator["DefaultAction"].as_str().unwrap_or("<default action from config>").clone().to_string();
         self
     }
 }
@@ -128,12 +138,27 @@ pub fn exit() -> ! {
 // Gets error message from appropriate localization file provided by language::loader()
 // and returns it as a String
 pub fn message(code: usize) -> String {
+    let (error_txt, msg_txt) = message_raw(code);
+
+    match code {
+        1..=44 => return format!("{} {}: {}", error_txt, code, msg_txt),
+        _ => unreachable!("Internal Logic Error"),
+    };
+}
+// Gets the specified code from the localization files
+// Returns (Error.Error, Error.[code])
+pub fn message_raw(code: usize) -> (String, String) {
     let locators = YamlLoader::load_from_str(&loader()).unwrap();
     let locator = &locators[0]["Error"];
 
     let error = &locator["Error"].as_str().unwrap();
-    match code {
-        1..=31 => return format!("{} {}: {}", error, code, &locator[code].as_str().unwrap()),
-        _ => unreachable!("Internal Logic Error"),
-    };
+    let error_msg = &locator[code].as_str().unwrap();
+    (error.to_string(), error_msg.to_string())
+}
+pub fn message_code(code: usize) -> String {
+    let locators = YamlLoader::load_from_str(&loader()).unwrap();
+    let locator = &locators[0]["Error"];
+
+    let error_msg = &locator[code].as_str().unwrap();
+    error_msg.to_string()
 }
