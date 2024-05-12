@@ -64,18 +64,18 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
                     crate::text::exit();
                 }
             };
-            println!("response_body: {}", response_body);
             let response_data: XBackboneResponse = match serde_json::from_str(response_body.as_str()) {
                 Ok(v) => v,
                 Err(e) => {
+                    println!("handler.xbackbone.run->response_body {:#?}", response_body);
                     eprintln!("handler.xbackbone.run->response_data {:#?}", e);
                     crate::notification::error(40);
                     crate::text::exit();
                 }
             };
             if response_data.message != "OK".to_string() {
-                eprintln!("handler.xbackbone.run->response_data unhandled message code {}", response_data.message);
                 println!("handler.xbackbone.run->response_data {:#?}", response_data);
+                eprintln!("handler.xbackbone.run->response_data unhandled message code {}", response_data.message);
                 crate::notification::error_msg(41, format!("{}", response_data.message));
                 crate::text::exit();
             }
