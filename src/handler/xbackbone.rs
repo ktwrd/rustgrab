@@ -74,9 +74,9 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
                 }
             };
             if response_data.message != "OK".to_string() {
-                eprintln!("handler.xbackbone.run->response_data unhandled message {}", response_data.message);
-                eprintln!("{:#?}", response_data);
-                crate::notification::error(41);
+                eprintln!("handler.xbackbone.run->response_data unhandled message code {}", response_data.message);
+                println!("handler.xbackbone.run->response_data {:#?}", response_data);
+                crate::notification::error_msg(41, format!("{}", response_data.message));
                 crate::text::exit();
             }
             
