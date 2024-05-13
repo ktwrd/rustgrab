@@ -30,6 +30,7 @@
 * Linux or BSD
 * `rustc` 1.78.0 (Rust 2021)
 * `feh` (only need if `spectacle` is not installed or using GNOME)
+* `xclip-copyfile` for copying non-png files.
 
 ## Features
 * Takes screenshots
