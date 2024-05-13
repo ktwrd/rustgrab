@@ -7,7 +7,7 @@ use crate::{
     image,
     config::ImageTarget
 };
-use crate::helper::Error as LError;
+use crate::helper::LError as LError;
 
 pub mod xbackbone;
 pub mod imgur;

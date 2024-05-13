@@ -1,6 +1,7 @@
 {
     "default_action": "Area",
     "default_target": "Filesystem",
+    "fs_target_post": "File",
     "filename_format": "%Y%m%d_%H-%H-%M.png",
     "location_format": "/Screenshots/%Y-%m/",
     "location_root": "home.pictures",

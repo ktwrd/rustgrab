@@ -32,6 +32,7 @@ serde = { version = "1.0.201", features = ["derive"] }
 serde_json = { version = "1.0.117" }
 reqwest = { version = "0.12.4", features = ["multipart", "stream", "blocking"] }
 arboard = "3.4.0"
+png = "0.17.13"
 
 # used for the "$uuid" location template
 [dependencies.uuid]

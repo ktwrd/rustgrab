@@ -4,7 +4,7 @@ use imgur;
 use open;
 use std::fs::File;
 use std::io::Read;
-use crate::helper::Error as LError;
+use crate::helper::LError;
 
 pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKind)
     -> Result<(), LError>{

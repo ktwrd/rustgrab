@@ -1,46 +1,14 @@
 use screenshot_rs::ScreenshotKind;
 use glib::{user_special_dir, UserDirectory};
+use serde::{Deserialize, Serialize};
 use crate::text;
-use crate::helper::Error as LError;
-
+use crate::helper::LError as LError;
 use std::path::PathBuf;
 
 pub const CONFIG_ACTION_DEFAULT: &str = "area";
 pub const FILENAME_FORMAT_DEFAULT: &str = "%Y%m%d_%H-%H-%M.png";
 pub const LOCATION_ROOT_DEFAULT: &str = "home.pictures";
 pub const LOCATION_FORMAT_DEFAULT: &str = "/Screenshots/%Y-%m/";
-
-pub fn get_default_base_path() -> Result<PathBuf, crate::helper::Error> {
-    match std::env::current_dir() {
-        Ok(v) => Ok(v),
-        Err(e) => {
-            let m: String = text::message(34).replace("%s", "std::env::current_dir()");
-            Err(LError::ConfigIOError(e, m))
-        }
-    }
-}
-
-pub fn base_path_from_config(location_root: String) -> Result<PathBuf, crate::helper::Error> {
-    let default_location = get_default_base_path()?;
-
-    let base: Option<PathBuf> = match location_root.as_str() {
-        "home" => Some(glib::home_dir()),
-        "home.desktop" => user_special_dir(UserDirectory::Desktop),
-        "home.pictures" => user_special_dir(UserDirectory::Pictures),
-        "home.documents" => user_special_dir(UserDirectory::Documents),
-        _ => Some(default_location.clone())
-    };
-    match base {
-        Some(v) => Ok(v),
-        None => {
-            if location_root.len() > 0 {
-                println!("Invalid location_root {}", location_root);
-            }
-
-            Ok(default_location)
-        }
-    }
-}
 
 #[derive(Debug, Clone, Copy)]
 pub enum UserConfigKeyword {
@@ -50,22 +18,39 @@ pub enum UserConfigKeyword {
     ConfigContentRead,
     ConfigContentToUtf8
 }
-use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 pub enum ImageTarget {
+    /// src/handler/filesystem.rs
     Filesystem,
 
+    /// todo: exists in broken form. see src/twitter.rs
     Twitter,
+    /// todo: exists in broken form. see src/mastodon.rs
     Mastodon,
     Imgur,
 
+    /// todo
     GoogleCloudStorage,
+    /// todo
     AWS,
+    /// src/handler/xbackbone.rs
     XBackbone
 }
 impl Default for ImageTarget {
     fn default() -> Self {
         ImageTarget::Filesystem
+    }
+}
+/// Action that happens after the Image target is successful.
+/// This only applies when the ImageTarget is set to Filesystem
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+pub enum ClipboardAction {
+    Location,
+    File
+}
+impl Default for ClipboardAction {
+    fn default() -> Self {
+        ClipboardAction::File
     }
 }
 #[derive(Debug, Deserialize, Serialize)]
@@ -75,6 +60,8 @@ pub struct UserConfig {
 
     #[serde(default)]
     pub default_target: ImageTarget,
+    #[serde(default)]
+    pub fs_target_post: ClipboardAction,
 
     #[serde(default = "get_default_filename_format")]
     pub filename_format: String,
@@ -94,6 +81,7 @@ impl UserConfig {
         Self {
             default_action: CONFIG_ACTION_DEFAULT.to_string(),
             default_target: ImageTarget::default(),
+            fs_target_post: ClipboardAction::default(),
             filename_format: FILENAME_FORMAT_DEFAULT.to_string(),
             location_format: LOCATION_FORMAT_DEFAULT.to_string(),
             location_root: LOCATION_ROOT_DEFAULT.to_string(),
@@ -157,10 +145,10 @@ impl UserConfig {
     }
 
     /// This function generates the full location for a new file.
-    pub fn generate_location(&self) -> Result<String, crate::helper::Error> {
+    pub fn generate_location(&self) -> Result<String, crate::helper::LError> {
         let current_date = chrono::Local::now();
 
-        let base_safe = base_path_from_config(self.location_root.clone())?;
+        let base_safe = crate::helper::base_path_from_config(self.location_root.clone())?;
         let base_str = match base_safe.to_str() {
             Some(v) => v,
             None => {

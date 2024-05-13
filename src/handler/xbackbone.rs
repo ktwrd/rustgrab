@@ -2,7 +2,7 @@ use crate::{text, config::ImageTarget, notification::NotificationKind};
 use reqwest::blocking::multipart;
 
 pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKind)
-    -> Result<(), crate::helper::Error> {
+    -> Result<(), crate::helper::LError> {
     let xb_cfg = match config.xbackbone_config {
         Some(ref v) => v,
         None => {
@@ -80,7 +80,7 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
                 crate::text::exit();
             }
             
-            match crate::helper::clipboard_copy_text(response_data.url) {
+            match crate::clipboard::copy_text(response_data.url) {
                 Ok(_) => {
                     crate::notification::display(ImageTarget::XBackbone, NotificationKind::ClipboardCopy);
                     Ok(())
