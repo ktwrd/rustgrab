@@ -77,3 +77,8 @@ pub fn base_path_from_config(location_root: String) -> Result<PathBuf, crate::he
         }
     }
 }
+pub fn get_file_extension(location: String) -> String {
+    std::path::Path::new(location.as_str())
+        .extension()
+        .and_then(std::ffi::OsStr::to_str).unwrap_or("").to_string()
+}
