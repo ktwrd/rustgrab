@@ -31,7 +31,8 @@ pub enum LError {
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 pub enum ErrorSource {
     Unknown,
-    TryGetFileContent
+    TryGetFileContent,
+    CopyFileGeneric
 }
 impl Default for ErrorSource {
     fn default() -> Self {
