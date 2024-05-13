@@ -30,7 +30,7 @@ pub fn message_dialog(text: String, title: String, msg_type: MessageType) {
             messagetype_as_str(msg_type));
     }
 }
-
+// why the FUCK is Debug not implemented on MessageType????
 fn messagetype_as_str(v: MessageType) -> String {
     match v {
         MessageType::Info => "Info",
