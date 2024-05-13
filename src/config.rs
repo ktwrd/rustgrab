@@ -42,15 +42,14 @@ impl Default for ImageTarget {
     }
 }
 /// Action that happens after the Image target is successful.
-/// This only applies when the ImageTarget is set to Filesystem
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
-pub enum ClipboardAction {
-    Location,
-    File
+pub enum PostTargetAction {
+    CopyLocation,
+    CopyContent
 }
-impl Default for ClipboardAction {
+impl Default for PostTargetAction {
     fn default() -> Self {
-        ClipboardAction::File
+        PostTargetAction::CopyLocation
     }
 }
 #[derive(Debug, Deserialize, Serialize)]
@@ -61,7 +60,7 @@ pub struct UserConfig {
     #[serde(default)]
     pub default_target: ImageTarget,
     #[serde(default)]
-    pub fs_target_post: ClipboardAction,
+    pub post_target_action: PostTargetAction,
 
     #[serde(default = "get_default_filename_format")]
     pub filename_format: String,
@@ -81,7 +80,7 @@ impl UserConfig {
         Self {
             default_action: CONFIG_ACTION_DEFAULT.to_string(),
             default_target: ImageTarget::default(),
-            fs_target_post: ClipboardAction::default(),
+            post_target_action: PostTargetAction::default(),
             filename_format: FILENAME_FORMAT_DEFAULT.to_string(),
             location_format: LOCATION_FORMAT_DEFAULT.to_string(),
             location_root: LOCATION_ROOT_DEFAULT.to_string(),
