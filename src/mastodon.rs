@@ -5,7 +5,7 @@ pub fn image(status: String) {
     let service = ImageTarget::Mastodon;
 
     let tmp = image::temp_dir();
-    let temp = tmp.to_str().unwrap().clone();
+    let temp = tmp.to_str().unwrap();
 
     // Calls the "toot" Python app and sends a status with an image
     let toot = match Command::new("toot")
