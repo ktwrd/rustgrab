@@ -18,12 +18,18 @@ pub enum LError {
     FromUtf8Error(std::string::FromUtf8Error),
     Json(serde_json::Error),
     IO(std::io::Error),
+    IOS(ErrorSource, std::io::Error),
     Clipboard(arboard::Error),
     
     ErrorCode(usize),
     ErrorCodeE(usize, Box<dyn std::error::Error>),
 
-    PngDecodingError(String, png::DecodingError),
+    UnhandledProcessExitStatus(std::process::ExitStatus),
+    UnhandledProcessExitStatusS(ErrorSource, std::process::ExitStatus),
+
+    UnhandledPostTargetAction(crate::config::PostTargetAction),
+
+    ImageError(String, image::error::ImageError),
 
     UnhandledFileExtension(String)
 }
