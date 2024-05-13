@@ -27,6 +27,7 @@ pub enum ImageTarget {
     Twitter,
     /// todo: exists in broken form. see src/mastodon.rs
     Mastodon,
+    /// todo: not tested. src/handler/imgur.rs
     Imgur,
 
     /// todo
