@@ -13,7 +13,6 @@ pub mod xbackbone;
 pub mod imgur;
 pub mod filesystem;
 
-
 pub fn run(service: ImageTarget,
                     create_file_when_none: bool,
                     target_file: Option<String>,
@@ -72,7 +71,7 @@ pub fn runcfg(screenshot_kind: ScreenshotKind) {
             };
         },
         Err(e) => {
-            crate::notification::error_body(46, format!("{:#?}", e));
+            crate::msgbox::error(46);
             panic!("Failed to get config.\n{:#?}", e);
         }
     }
@@ -81,7 +80,9 @@ fn inner_handle(target: ImageTarget, res: Result<(), LError>) {
     match res {
         Ok(_) => {},
         Err(e) => {
-            crate::notification::error(0);
+            crate::msgbox::error_custom(
+                format!("Failed to handle target {:#?}\n\n{:#?}", target, e),
+                format!("Failed to handle target"));
             panic!("Failed to run {:#?}. {:#?}", target, e);
         }
     }
