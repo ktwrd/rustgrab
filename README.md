@@ -32,7 +32,7 @@ Screenshot Utility made in Rust for ex-ShareX Users.
 - Unity desktop
 - Generic X11 DE **(with `scrot`)**
 
-Screenshot handling is done with screenshot
+Screenshot handling is done with [screenshot-rs](https://crates.io/crates/screenshot-rs).
 #### Tested on
 - Debian Trixie w/ KDE 5 (2024/05/12)
 
