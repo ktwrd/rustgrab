@@ -12,7 +12,8 @@ Notification:
         Twitter: Tweet not sent
     Clipboard:
         Copy:
-            Filesystem: Copied Image to clipboard
+            Content: Copied Image to clipboard
+            Filesystem: Copied Image location to clipboard
             Mastodon: Copied Toot link to clipboard
             Twitter: Copied Tweet link to clipboard
             XBackbone: Copied link to clipboard
@@ -73,6 +74,7 @@ Error:
     44: Failed to attach image.
     45: Target %s has not been implemented.
     46: Failed to parse config.
+    47: Failed to copy image to clipboard.
 Help:
     Usage: Usage
     Options: Options
