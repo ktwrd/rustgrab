@@ -33,6 +33,7 @@ serde_json = { version = "1.0.117" }
 reqwest = { version = "0.12.4", features = ["multipart", "stream", "blocking"] }
 arboard = "3.4.0"
 image = { version="0.25.1", features = ["png"] }
+native-dialog = "0.7.0"
 
 # used for the "$uuid" location template
 [dependencies.uuid]
