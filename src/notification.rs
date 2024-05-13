@@ -10,7 +10,10 @@ pub enum NotificationKind {
     Sent,
     SendFailure,
     FileCopy,
-    ClipboardCopy
+    // Location of thing is copied
+    ClipboardCopy,
+    // Actual thing is copied
+    ClipboardCopyContent
 }
 
 fn notification(service: ImageTarget, notification: NotificationKind) -> String {
@@ -49,6 +52,9 @@ fn notification(service: ImageTarget, notification: NotificationKind) -> String 
                 ImageTarget::XBackbone => locator = &locator["XBackbone"],
                 _ => unreachable!("ImageTarget {:#?} is not supported for {:#?}", service, notification)
             }
+        },
+        NotificationKind::ClipboardCopyContent => {
+            locator = &locator["Clipboard"]["Copy"]["Content"];
         }
     }
     return format!("{}", locator.as_str().unwrap());
