@@ -35,53 +35,53 @@ pub enum Text {
 
 pub struct LocaleValues
 {
-    pub Help: String,
-    pub Version: String,
-    pub Area: String,
-    pub Window: String,
-    pub Full: String,
-    pub File: String,
-    pub Mastodon: String,
-    pub Twitter: String,
-    pub Imgur: String,
-    pub TwitterAuth: String,
-    pub MastodonAuth: String,
-    pub DefaultAction: String
+    pub help: String,
+    pub version: String,
+    pub area: String,
+    pub window: String,
+    pub full: String,
+    pub file: String,
+    pub mastodon: String,
+    pub twitter: String,
+    pub imgur: String,
+    pub twitter_auth: String,
+    pub mastodon_auth: String,
+    pub default_action: String
 }
 impl LocaleValues {
     pub fn new() -> Self
     {
         Self {
-            Help: String::new(),
-            Version: String::new(),
-            Area: String::new(),
-            Window: String::new(),
-            Full: String::new(),
-            File: String::new(),
-            Mastodon: String::new(),
-            Twitter: String::new(),
-            Imgur: String::new(),
-            TwitterAuth: String::new(),
-            MastodonAuth: String::new(),
-            DefaultAction: String::new()
+            help: String::new(),
+            version: String::new(),
+            area: String::new(),
+            window: String::new(),
+            full: String::new(),
+            file: String::new(),
+            mastodon: String::new(),
+            twitter: String::new(),
+            imgur: String::new(),
+            twitter_auth: String::new(),
+            mastodon_auth: String::new(),
+            default_action: String::new()
         }
     }
     pub fn generate(&mut self) -> &mut Self
     {
         let locators = YamlLoader::load_from_str(&loader()).unwrap();
         let locator = &locators[0]["Help"].clone();
-        self.Help = locator["Help"].as_str().unwrap_or("<help>").clone().to_string();
-        self.Version = locator["Version"].as_str().unwrap_or("<version>").clone().to_string();
-        self.Area = locator["Area"].as_str().unwrap_or("<area>").clone().to_string();
-        self.Window = locator["Window"].as_str().unwrap_or("<window>").clone().to_string();
-        self.Full = locator["Full"].as_str().unwrap_or("<full>").clone().to_string();
-        self.File = locator["File"].as_str().unwrap_or("<file>").clone().to_string();
-        self.Mastodon = locator["Toot"].as_str().unwrap_or("<mastodon>").clone().to_string();
-        self.Twitter = locator["Tweet"].as_str().unwrap_or("<twitter>").clone().to_string();
-        self.Imgur = locator["Imgur"].as_str().unwrap_or("<imgur>").clone().to_string();
-        self.TwitterAuth = locator["Twitter"]["Auth"].as_str().unwrap_or("<twitter_auth>").clone().to_string();
-        self.MastodonAuth = locator["Mastodon"]["Auth"].as_str().unwrap_or("<mastodon_auth>").clone().to_string();
-        self.DefaultAction = locator["DefaultAction"].as_str().unwrap_or("<default action from config>").clone().to_string();
+        self.help = locator["Help"].as_str().unwrap_or("<help>").to_string();
+        self.version = locator["Version"].as_str().unwrap_or("<version>").to_string();
+        self.area = locator["Area"].as_str().unwrap_or("<area>").to_string();
+        self.window = locator["Window"].as_str().unwrap_or("<window>").to_string();
+        self.full = locator["Full"].as_str().unwrap_or("<full>").to_string();
+        self.file = locator["File"].as_str().unwrap_or("<file>").to_string();
+        self.mastodon = locator["Toot"].as_str().unwrap_or("<mastodon>").to_string();
+        self.twitter = locator["Tweet"].as_str().unwrap_or("<twitter>").to_string();
+        self.imgur = locator["Imgur"].as_str().unwrap_or("<imgur>").to_string();
+        self.twitter_auth = locator["Twitter"]["Auth"].as_str().unwrap_or("<twitter_auth>").to_string();
+        self.mastodon_auth = locator["Mastodon"]["Auth"].as_str().unwrap_or("<mastodon_auth>").to_string();
+        self.default_action = locator["DefaultAction"].as_str().unwrap_or("<default action from config>").to_string();
         self
     }
 }
