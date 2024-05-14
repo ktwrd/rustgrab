@@ -5,7 +5,7 @@ authors = ["Kate Ward <kate@dariox.club>"]
 description = "Screenshot Utility made in Rust"
 homepage = "https://github.com/ktwrd/rustgrab"
 repository = "https://github.com/ktwrd/rustgrab"
-keywords = ["twitter", "mastodon", "imgur", "gtk", "linux"]
+keywords = ["twitter", "mastodon", "imgur", "linux"]
 license = "GPL-3.0"
 include = ["lang/*", "Cargo.toml", "data/gtk/dialog.ui", "src/*"]
 edition = "2021"
@@ -16,10 +16,7 @@ name = "rustgrab"
 path = "src/main.rs"
 
 [dependencies]
-gtk = { version = "0.18.1", features = ["v3_24", "gio_v2_58"] }
-gdk = { version = "0.18.0", features = ["v3_24"] }
 glib = { version = "0.18.5" }
-gio = { version = "0.18.4" }
 open = "5.1.2"
 imgur = "0.7.0"
 notify-rust = "4.11.0"
@@ -32,7 +29,7 @@ serde = { version = "1.0.201", features = ["derive"] }
 serde_json = { version = "1.0.117" }
 reqwest = { version = "0.12.4", features = ["multipart", "stream", "blocking"] }
 arboard = "3.4.0"
-image = { version="0.25.1", features = ["png"] }
+image = { version = "0.25.1", features = ["png"] }
 native-dialog = "0.7.0"
 
 # used for the "$uuid" location template
