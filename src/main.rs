@@ -1,29 +1,18 @@
-mod dialog;
-mod image;
-mod mastodon;
-mod notification;
-mod text;
-mod twitter;
-mod handler;
-mod config;
-mod helper;
-mod default;
-mod clipboard;
-mod msgbox;
 
-use clap::{Arg, Command, crate_version, crate_authors};
+use clap::{
+    Command,
+    crate_version,
+    crate_authors};
 
-use crate::config::ImageTarget;
+use rustgrab::{
+    locale::LocaleValues,
+    handler
+};
 
-#[derive(Copy, Clone, PartialEq)]
-pub enum MessageKind {
-    Image,
-    Text,
-}
 
 fn main() {
     // Individual parts the help menu
-    let mut locale = text::LocaleValues::new();
+    let mut locale = LocaleValues::new();
     locale.generate();
 
     /*let file_arg = Arg::new("file")

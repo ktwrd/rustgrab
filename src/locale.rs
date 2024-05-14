@@ -1,40 +1,7 @@
-use std::{env, process};
+use std::env;
 use yaml_rust::YamlLoader;
 
-#[allow(dead_code)]
-pub enum ErrorCodenames {
-    GtkInitError,
-    ScreenshotUnsuccessful,
-    StrfTimeUnavailable,
-    PicturesFolderUnavailable,
-    ScreenshotSaveError,
-    ImageViewerError,
-    FileError,
-    ImgurUploadFailure,
-    ClipboardUnavailable,
-
-    MastodonImageUnsuccessful,
-    MastodonTootUnsuccessful,
-    MastodonLoginError,
-
-    TwitterImageUnsuccessful,
-    TwitterTweetUnsucessful,
-    TwitterLoginError,
-
-    NotificationUnavailable,
-
-    UnwrapBaseConfigLocation,
-    UnwrapFinalConfigLocation,
-    FallbackDirectoryFail
-}
-
-#[allow(dead_code)]
-pub enum Text {
-    UnsupportedWayland,
-}
-
-pub struct LocaleValues
-{
+pub struct LocaleValues {
     pub help: String,
     pub version: String,
     pub area: String,
@@ -86,8 +53,7 @@ impl LocaleValues {
     }
 }
 
-// Retrieves locale settings of the user using LC_CTYPE or LANG
-fn locale() -> String {
+pub fn code() -> String {
     match env::var("LC_CTYPE") {
         Ok(ok) => ok,
         Err(_) => match env::var("LANG") {
@@ -97,9 +63,8 @@ fn locale() -> String {
     }
 }
 
-// Retrieves the correct localization file and returns a String
 pub fn loader() -> String {
-    let lang = locale();
+    let lang = code();
 
     if lang.contains("fr") {
         return include_str!("../lang/fr.yml").to_string();
@@ -130,32 +95,38 @@ pub fn loader() -> String {
     }
 }
 
-// Ends the current process with an error code (useful in BASH scripting)
-pub fn exit() -> ! {
-    process::exit(1);
-}
-
-// Gets error message from appropriate localization file provided by language::loader()
-// and returns it as a String
-pub fn message(code: usize) -> String {
-    let (error_txt, msg_txt) = message_raw(code);
+pub fn error(code: usize) -> String {
+    let r = error_raw(code);
+    let (error_txt, msg_txt) = (r.error, r.code);
 
     match code {
         1..=47 => return format!("{} {}: {}", error_txt, code, msg_txt),
         _ => unreachable!("Internal Logic Error"),
     };
 }
-// Gets the specified code from the localization files
-// Returns (Error.Error, Error.[code])
-pub fn message_raw(code: usize) -> (String, String) {
+
+pub struct ErrorRawValue {
+    error: String,
+    code: String
+}
+impl ErrorRawValue {
+    pub fn new(e: String, c: String) -> Self {
+        Self {
+            error: e,
+            code: c
+        }
+    }
+}
+pub fn error_raw(code: usize) -> ErrorRawValue {
     let locators = YamlLoader::load_from_str(&loader()).unwrap();
     let locator = &locators[0]["Error"];
 
     let error = &locator["Error"].as_str().unwrap();
     let error_msg = &locator[code].as_str().unwrap();
-    (error.to_string(), error_msg.to_string())
+    ErrorRawValue::new(error.to_string(), error_msg.to_string())
 }
-pub fn message_code(code: usize) -> String {
+
+pub fn error_code(code: usize) -> String {
     let locators = YamlLoader::load_from_str(&loader()).unwrap();
     let locator = &locators[0]["Error"];
 

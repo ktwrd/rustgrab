@@ -14,7 +14,7 @@ pub fn image(status: String) {
     {
         Ok(ok) => ok,
         Err(_) => {
-            eprintln!("{}", text::message(6));
+            eprintln!("{}", locale::error(6));
             notification::not_sent(service);
             text::exit()
         }
@@ -22,7 +22,7 @@ pub fn image(status: String) {
 
     // If toot gives the error code 2, then the status was not sent
     if toot.code() == Some(2) {
-        eprintln!("{}", text::message(21));
+        eprintln!("{}", locale::error(21));
         notification::not_sent(service);
         text::exit();
     } else {
@@ -37,7 +37,7 @@ pub fn toot(status: String) {
     let toot = match Command::new("toot").args(&["post", &status]).status() {
         Ok(ok) => ok,
         Err(_) => {
-            eprintln!("{}", text::message(6));
+            eprintln!("{}", locale::error(6));
             notification::not_sent(service);
             text::exit()
         }
@@ -45,7 +45,7 @@ pub fn toot(status: String) {
 
     // If toot gives the error code 2, then the status was not sent
     if toot.code() == Some(2) {
-        eprintln!("{}", text::message(21));
+        eprintln!("{}", locale::error(21));
         notification::not_sent(service);
         text::exit();
     } else {
@@ -56,7 +56,7 @@ pub fn toot(status: String) {
 pub fn auth() {
     // Calls the "toot" Python app and asks to login using the browser
     if Command::new("toot").arg("login").status().is_err() {
-        eprintln!("{}", text::message(6));
+        eprintln!("{}", locale::error(6));
         text::exit();
     };
 }

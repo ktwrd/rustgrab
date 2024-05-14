@@ -1,5 +1,5 @@
 use arboard::{Clipboard, ImageData};
-use crate::helper::{LError, ErrorSource, self};
+use crate::{LError, ErrorSource, helper};
 use image::io::Reader as ImageReader;
 use image::ImageFormat;
 use std::io::Cursor;

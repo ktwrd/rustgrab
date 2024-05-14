@@ -1,15 +1,13 @@
 use crate::config::{ImageTarget, UserConfig, PostTargetAction};
-use crate::helper::LError;
-use crate::notification::NotificationKind;
-use crate::{clipboard, image, text};
+use crate::{clipboard, locale, LError, notification::NotificationKind};
 
 pub fn run(config: UserConfig, kind: screenshot_rs::ScreenshotKind)
-    -> Result<(), crate::helper::LError> {
+    -> Result<(), LError> {
 
     let target_location = config.generate_location()?.clone();
-    if image::image_to_file(kind, target_location.clone()) == false {
-        eprintln!("{}", text::message(30));
-        crate::text::exit();
+    if crate::image_to_file(kind, target_location.clone()) == false {
+        eprintln!("[handler.filesystem.run] {}", locale::error(30));
+        return Err(LError::ErrorCode(30));
     }
 
     match config.post_target_action {
@@ -33,8 +31,7 @@ fn copy_location(location: String) -> Result<(), LError> {
         },
         Err(e) => {
             println!("[filesystem.copy_location] failed to copy to clipboard: {:#?}", e);
-            crate::notification::error_msg(42, location);
-            crate::text::exit();
+            return Err(LError::ErrorCodeMsg(42, location));
         }
     }
 }
@@ -47,8 +44,7 @@ fn copy_content(location: String) -> Result<(), LError> {
         },
         Err(e) => {
             println!("[filesystem.copy_content] failed to copy content to clipboard: {:#?}", e);
-            crate::notification::error_msg(47, location);
-            crate::text::exit();
+            return Err(LError::ErrorCodeMsg(47, location));
         }
     }
 }

@@ -1,12 +1,12 @@
 use native_dialog::{MessageDialog, MessageType};
 pub fn error(code: usize) {
     message_dialog(
-        crate::text::message(code),
+        crate::locale::error(code),
         "Error".to_string(),
         MessageType::Error);
 }
 pub fn error_msg(code: usize, msg: String) {
-    let content = crate::text::message(code)
+    let content = crate::locale::error(code)
         .replace("%s", msg.as_str());
     message_dialog(
         content,

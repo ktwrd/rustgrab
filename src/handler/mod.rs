@@ -1,54 +1,81 @@
 use clap::ArgMatches;
 use screenshot_rs::ScreenshotKind;
 use crate::{
-    text,
+    locale,
+    LError,
     MessageKind,
-    dialog,
-    image,
     config::ImageTarget
 };
-use crate::helper::LError as LError;
+use std::process;
 
-pub mod xbackbone;
 pub mod imgur;
 pub mod filesystem;
+pub mod xbackbone;
 
+#[allow(unused, unreachable_code)]
 pub fn run(service: ImageTarget,
-                    create_file_when_none: bool,
-                    target_file: Option<String>,
-                    sceenshot_kind: Option<ScreenshotKind>)
+            create_file_when_not_set: bool,
+            target_file: Option<String>,
+            screenshot_kind: Option<ScreenshotKind>)
+    -> Result<(), LError>
 {
     let mut has_screenshot = match target_file {
         Some(_) => true,
         None => false
     };
-
-    match target_file
-    {
-        Some(f) => image::file(f),
+    let location = match target_file {
+        Some(v) => v,
         None => {
-            if create_file_when_none {
-                let k = sceenshot_kind.unwrap_or(ScreenshotKind::Area);
-                image::image(k);
-                has_screenshot = true;
+            let i = crate::config::UserConfig::new();
+            match i.generate_location() {
+                Ok(v) => v,
+                Err(e) => {
+                    return Err(e);
+                }
             }
         }
     };
-
-    let message_kind = match has_screenshot {
-        true => MessageKind::Image,
-        false => MessageKind::Text
+    let kind = match screenshot_kind {
+        Some(v) => v,
+        None => {
+            println!("[handler.run] No screenshot kind was provided, defaulting to Area");
+            ScreenshotKind::Area
+        }
     };
 
-    dialog::dialog(service, message_kind);
+    let mut success = false;
+    let mut image_called = false;
+    if has_screenshot {
+        success = crate::image_to_file(kind, location);
+        image_called = true;
+    } else {
+        if create_file_when_not_set {
+            success = crate::image_to_file(kind, location);
+            image_called = true;
+        }
+    }
+
+    if success == false && image_called == true {
+        eprintln!("[handler.run] failed to create screenshot. assuming it was probably aborted by user.");
+        return Ok(());
+    }
+
+    let mut message_kind = MessageKind::Text;
+    if has_screenshot || (image_called && success) {
+        message_kind = MessageKind::Image;
+    }
+
+    todo!("use the dialog package for generating the old method of a dialog for tweet/toot");
+    //crate::dialog::dialog(service, message_kind);
+    Ok(())
 }
 
 pub fn runcfg(screenshot_kind: ScreenshotKind) {
     let location = crate::config::UserConfig::get_config_location();
     if std::path::Path::new(location.as_str()).exists() == false{
-        eprintln!("{} {}", text::message(43), location);
+        eprintln!("{} {}", locale::error(43), location);
         crate::notification::error(43);
-        crate::text::exit();
+        process::exit(1);
     }
     println!("location: {}", location);
     match crate::config::UserConfig::parse() {

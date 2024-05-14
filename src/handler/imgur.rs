@@ -1,18 +1,17 @@
 use crate::config::ImageTarget;
-use crate::{image, notification, text};
+use crate::{notification, locale, LError};
 use imgur;
 use open;
 use std::fs::File;
 use std::io::Read;
-use crate::helper::LError;
 
 pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKind)
     -> Result<(), LError>{
     
     let location = config.generate_location()?;
     
-    if crate::image::image_to_file(kind, location.clone()) == false {
-        eprintln!("{}", text::message(30));
+    if crate::image_to_file(kind, location.clone()) == false {
+        eprintln!("{}", locale::error(30));
         return Ok(());
     }
     
@@ -20,18 +19,16 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
     let mut file = match File::open(&location) {
         Ok(ok) => ok,
         Err(_) => {
-            eprintln!("{}", text::message(28));
-            notification::error(28);
-            text::exit()
+            eprintln!("[handler.imgur.run] {}", locale::error(28));
+            return Err(LError::ErrorCode(28));
         }
     };
     
     // Stores image in a Vector
     let mut image = Vec::new();
     if file.read_to_end(&mut image).is_err() {
-        eprintln!("{}", text::message(28));
-        notification::error(28);
-        text::exit();
+        eprintln!("[handler.imgur.run] {}", locale::error(28));
+        return Err(LError::ErrorCode(28));
     };
 
     // Creates Imgur Applications for sending to Imgur API
@@ -43,15 +40,13 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
         Ok(info) => match info.link() {
             Some(link) => copy_link.push_str(link),
             None => {
-                eprintln!("{}", text::message(20));
-                notification::error(20);
-                text::exit()
+                eprintln!("[handler.imgur.run] {}", locale::error(20));
+                return Err(LError::ErrorCode(20));
             }
         },
         Err(_) => {
-            eprintln!("{}", text::message(17));
-            notification::error(17);
-            text::exit()
+            eprintln!("[handler.imgur.run] {}", locale::error(17));
+            return Err(LError::ErrorCode(17));
         }
     }
 
@@ -62,8 +57,8 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
     match open::that(copy_link) {
         Ok(_) => Ok(()),
         Err(e) => {
-            eprintln!("{}", text::message(19));
-            eprintln!("{:#?}", e);
+            eprintln!("[handler.imgur.run] {}", locale::error(19));
+            eprintln!("[handler.imgur.run] {:#?}", e);
             notification::error(19);
             Err(LError::ErrorCode(19))
         }

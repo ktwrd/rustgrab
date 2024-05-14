@@ -1,32 +1,26 @@
-use crate::{text, config::ImageTarget, notification::NotificationKind};
+use crate::{LError, config::ImageTarget, notification::NotificationKind};
 use reqwest::blocking::multipart;
 
 pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKind)
-    -> Result<(), crate::helper::LError> {
+    -> Result<(), LError> {
     let xb_cfg = match config.xbackbone_config {
         Some(ref v) => v,
         None => {
-            eprintln!("{}", text::message(36).replace("%s", "XBackbone"));
-            crate::notification::error_msg(36, "XBackbone".to_string());
-            crate::text::exit();
+            return Err(LError::ErrorCode(36));
         }
     };
     
     let target_location = config.generate_location()?.clone();
     let filename = &target_location.split('/').into_iter().last().unwrap();
     let filename_str = filename.to_string();
-    if crate::image::image_to_file(kind, target_location.clone()) == false {
-        eprintln!("{}", text::message(30));
-        crate::text::exit();
+    if crate::image_to_file(kind, target_location.clone()) == false {
+        return Err(LError::ErrorCode(30));
     }
     
     let content = match std::fs::read(target_location.clone()) {
         Ok(v) => v,
         Err(e) => {
-            eprintln!("{} {}", text::message(19), target_location.clone());
-            eprintln!("{:#?}", e);
-            crate::notification::error_body(19, format!("{}", e));
-            crate::text::exit();
+            return Err(LError::ErrorCodeMsg(19, format!("{}", e)));
         }
     };
     
@@ -35,8 +29,7 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
         Err(e) => {
             eprintln!("Failed to set mime type to image/png");
             eprintln!("{:#?}", e);
-            crate::notification::error_body(44, format!("{}", e));
-            crate::text::exit();
+            return Err(LError::ErrorCodeMsg(44, format!("{}", e)));
         }
     };
     let form = multipart::Form::new()
@@ -48,8 +41,7 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
         Ok(v) => v,
         Err(e) => {
             eprintln!("handler.xbackbone.run->response {:#?}", e);
-            crate::notification::error(37);
-            crate::text::exit();
+            return Err(LError::ErrorCode(37));
         }
     };
     let status = response.status();
@@ -60,8 +52,7 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
                 Ok(ref v) => v,
                 Err(e) => {
                     eprintln!("handler.xbackbone.run->response_body {:#?}", e);
-                    crate::notification::error(38);
-                    crate::text::exit();
+                    return Err(LError::ErrorCode(38));
                 }
             };
             let response_data: XBackboneResponse = match serde_json::from_str(response_body.as_str()) {
@@ -69,15 +60,13 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
                 Err(e) => {
                     println!("handler.xbackbone.run->response_body {:#?}", response_body);
                     eprintln!("handler.xbackbone.run->response_data {:#?}", e);
-                    crate::notification::error(40);
-                    crate::text::exit();
+                    return Err(LError::ErrorCode(40));
                 }
             };
             if response_data.message != "OK".to_string() {
                 println!("handler.xbackbone.run->response_data {:#?}", response_data);
                 eprintln!("handler.xbackbone.run->response_data unhandled message code {}", response_data.message);
-                crate::notification::error_msg(41, format!("{}", response_data.message));
-                crate::text::exit();
+                return Err(LError::ErrorCodeMsg(41, format!("{}", response_data.message)));
             }
             
             match crate::clipboard::copy_text(response_data.url) {
@@ -87,7 +76,7 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
                 },
                 Err(e) => {
                     println!("failed to copy to clipboard: {:#?}", e);
-                    eprintln!("{}", crate::text::message(42));
+                    eprintln!("{}", crate::locale::error(42));
                     crate::notification::error(42);
                     Err(e)
                 }
@@ -95,8 +84,7 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
         },
         _ => {
             eprintln!("handler.xbackbone.run->status {:#?}", status);
-            crate::notification::error_msg(39, format!("{:#}", status));
-            crate::text::exit();
+            return Err(LError::ErrorCodeMsg(39, format!("{:#?}", status)));
         }
     }
 }

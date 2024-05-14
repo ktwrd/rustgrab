@@ -1,9 +1,7 @@
-use screenshot_rs::ScreenshotKind;
-use glib::{user_special_dir, UserDirectory};
 use serde::{Deserialize, Serialize};
-use crate::text;
-use crate::helper::LError as LError;
-use std::path::PathBuf;
+use crate::locale;
+use crate::LError as LError;
+use crate::helper;
 
 pub const CONFIG_ACTION_DEFAULT: &str = "area";
 pub const FILENAME_FORMAT_DEFAULT: &str = "%Y%m%d_%H-%H-%M.png";
@@ -13,10 +11,7 @@ pub const LOCATION_FORMAT_DEFAULT: &str = "/Screenshots/%Y-%m/";
 #[derive(Debug, Clone, Copy)]
 pub enum UserConfigKeyword {
     BasePath,
-    FinalPath,
-
-    ConfigContentRead,
-    ConfigContentToUtf8
+    FinalPath
 }
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 pub enum ImageTarget {
@@ -46,7 +41,8 @@ impl Default for ImageTarget {
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 pub enum PostTargetAction {
     CopyLocation,
-    CopyContent
+    CopyContent,
+    ShortenLocation
 }
 impl Default for PostTargetAction {
     fn default() -> Self {
@@ -145,14 +141,14 @@ impl UserConfig {
     }
 
     /// This function generates the full location for a new file.
-    pub fn generate_location(&self) -> Result<String, crate::helper::LError> {
+    pub fn generate_location(&self) -> Result<String, LError> {
         let current_date = chrono::Local::now();
 
-        let base_safe = crate::helper::base_path_from_config(self.location_root.clone())?;
+        let base_safe = helper::base_path_from_config(self.location_root.clone())?;
         let base_str = match base_safe.to_str() {
             Some(v) => v,
             None => {
-                eprintln!("{}", text::message(32));
+                eprintln!("{}", locale::error(32));
                 return Err(LError::ConfigUnwrapFailure(UserConfigKeyword::BasePath));
             }
         };
@@ -170,7 +166,7 @@ impl UserConfig {
         match location_res.to_str() {
             Some(v) => Ok(v.to_string()),
             None => {
-                eprintln!("{}", text::message(33));
+                eprintln!("{}", locale::error(33));
                 Err(LError::ConfigUnwrapFailure(UserConfigKeyword::FinalPath))
             }
         }

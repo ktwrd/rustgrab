@@ -1,9 +1,11 @@
 use crate::config::ImageTarget;
-use crate::{text};
+use crate::locale;
 use notify_rust::{Notification, Timeout};
 use std::fs;
 use std::{thread, time};
 use yaml_rust::YamlLoader;
+
+const APP_NAME: &str = "rustgrab";
 
 #[derive(Debug, Clone, Copy, serde::Deserialize, serde::Serialize)]
 pub enum NotificationKind {
@@ -18,7 +20,7 @@ pub enum NotificationKind {
 
 fn notification(service: ImageTarget, notification: NotificationKind) -> String {
     // Gets section of localization file for Notifications
-    let mut locator = &YamlLoader::load_from_str(&text::loader()).unwrap()[0]["Notification"];
+    let mut locator = &YamlLoader::load_from_str(&locale::loader()).unwrap()[0]["Notification"];
 
     // Checks kind of notification and the kind of service (Twitter, Mastodon, Imgur) used
     match &notification {
@@ -61,13 +63,13 @@ fn notification(service: ImageTarget, notification: NotificationKind) -> String 
 }
 pub fn display(service: ImageTarget, notif_kind: NotificationKind) {
     let notification = match Notification::new()
-        .appname("rustgrab")
+        .appname(APP_NAME)
         .summary(&notification(service, notif_kind))
         .show()
     {
         Ok(ok) => ok,
         Err(_) => {
-            eprintln!("{}", text::message(23));
+            eprintln!("{}", locale::error(23));
             return;
         }
     };
@@ -79,7 +81,7 @@ pub fn display(service: ImageTarget, notif_kind: NotificationKind) {
 // Sends a notification with notify-rust, when a status with an image or an image is sent/uploaded
 pub fn image_sent(service: ImageTarget, text: &str, img: &str) {
     let notification = match Notification::new()
-        .appname("rustgrab")
+        .appname(APP_NAME)
         .summary(&notification(service, NotificationKind::Sent))
         .body(text)
         .icon(&img)
@@ -87,7 +89,7 @@ pub fn image_sent(service: ImageTarget, text: &str, img: &str) {
     {
         Ok(ok) => ok,
         Err(_) => {
-            eprintln!("{}", text::message(23));
+            eprintln!("{}", locale::error(23));
             return;
         }
     };
@@ -104,14 +106,14 @@ pub fn image_sent(service: ImageTarget, text: &str, img: &str) {
 // Sends a notification when a status is sent
 pub fn message_sent(service: ImageTarget, text: &str) {
     let notification = match Notification::new()
-        .appname("rustgrab")
+        .appname(APP_NAME)
         .summary(&notification(service, NotificationKind::Sent))
         .body(text)
         .show()
     {
         Ok(ok) => ok,
         Err(_) => {
-            eprintln!("{}", text::message(23));
+            eprintln!("{}", locale::error(23));
             return;
         }
     };
@@ -123,13 +125,13 @@ pub fn message_sent(service: ImageTarget, text: &str) {
 // Sends a notification when a status update didn't go through
 pub fn not_sent(service: ImageTarget) {
     if Notification::new()
-        .appname("rustgrab")
+        .appname(APP_NAME)
         .summary(&notification(service, NotificationKind::SendFailure))
         .timeout(Timeout::Milliseconds(3000))
         .show()
         .is_err()
     {
-        eprintln!("{}", text::message(23));
+        eprintln!("{}", locale::error(23));
         return;
     };
 }
@@ -137,40 +139,40 @@ pub fn not_sent(service: ImageTarget) {
 // Sends a notification with the error message as the body
 pub fn error(code: usize) {
     if Notification::new()
-        .appname("rustgrab")
-        .summary(&text::message(code))
+        .appname(APP_NAME)
+        .summary(&locale::error(code))
         .timeout(Timeout::Milliseconds(3000))
         .show()
         .is_err()
     {
-        eprintln!("{}", text::message(23));
+        eprintln!("{}", locale::error(23));
         return;
     };
 }
 pub fn error_msg(code: usize, msg: String) {
-    let summary = text::message(code)
+    let summary = locale::error(code)
         .replace("%s", msg.as_str());
     if Notification::new()
-        .appname("rustgrab")
+        .appname(APP_NAME)
         .summary(&summary)
         .timeout(Timeout::Milliseconds(5000))
         .show()
         .is_err()
     {
-        eprintln!("{}", text::message(23));
+        eprintln!("{}", locale::error(23));
         return;
     };
 }
 pub fn error_body(code: usize, body: String) {
     if Notification::new()
-        .appname("rustgrab")
-        .summary(&text::message(code))
+        .appname(APP_NAME)
+        .summary(&locale::error(code))
         .body(&body)
         .timeout(Timeout::Milliseconds(3000))
         .show()
         .is_err()
     {
-        eprintln!("{}", text::message(23));
+        eprintln!("{}", locale::error(23));
         return;
     };
 }
@@ -179,13 +181,13 @@ pub fn error_body(code: usize, body: String) {
 #[allow(dead_code)]
 pub fn debug(error: String) {
     if Notification::new()
-        .appname("rustgrab")
+        .appname(APP_NAME)
         .summary(&error.to_string())
         .timeout(Timeout::Milliseconds(3000))
         .show()
         .is_err()
     {
-        eprintln!("{}", text::message(23));
+        eprintln!("{}", locale::error(23));
         return;
     };
 }

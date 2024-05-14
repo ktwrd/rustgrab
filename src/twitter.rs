@@ -14,7 +14,7 @@ pub fn image(status: String) {
     {
         Ok(ok) => ok,
         Err(_) => {
-            eprintln!("{}", text::message(5));
+            eprintln!("{}", locale::error(5));
             notification::not_sent(service);
             text::exit()
         }
@@ -22,7 +22,7 @@ pub fn image(status: String) {
 
     // If t gives the error code 1, then the status was not sent
     if t.code() == Some(1) {
-        eprintln!("{}", text::message(22));
+        eprintln!("{}", locale::error(22));
         notification::not_sent(service);
         text::exit();
     } else {
@@ -37,7 +37,7 @@ pub fn tweet(status: String) {
     let t = match Command::new("t").args(&["update", &status]).status() {
         Ok(ok) => ok,
         Err(_) => {
-            eprintln!("{}", text::message(5));
+            eprintln!("{}", locale::error(5));
             notification::not_sent(service);
             text::exit()
         }
@@ -45,7 +45,7 @@ pub fn tweet(status: String) {
 
     // If t gives the error code 1, then the status was not sent
     if t.code() == Some(1) {
-        eprintln!("{}", text::message(22));
+        eprintln!("{}", locale::error(22));
         notification::not_sent(service);
         text::exit();
     } else {
@@ -56,7 +56,7 @@ pub fn tweet(status: String) {
 pub fn auth() {
     // Calls the "t" Ruby app and asks the user to login
     if Command::new("t").arg("authorize").status().is_err() {
-        eprintln!("{}", text::message(5));
+        eprintln!("{}", locale::error(5));
         text::exit();
     };
 }
