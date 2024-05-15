@@ -82,7 +82,8 @@ impl UserConfig {
             filename_format: FILENAME_FORMAT_DEFAULT.to_string(),
             location_format: LOCATION_FORMAT_DEFAULT.to_string(),
             location_root: LOCATION_ROOT_DEFAULT.to_string(),
-            xbackbone_config: None
+            xbackbone_config: None,
+            imgur_config: None
         }
     }
 
