@@ -1,3 +1,7 @@
+#### [0.7.5] - 2024-05-15
+- Add support for Google Cloud Storage
+- Fix some bugs with copying to clipboard
+
 #### [0.7.4] - 2024-05-15
 - Remove support for Twitter and Mastodon.
 - Drop gtk/gdk/dio dependency.
