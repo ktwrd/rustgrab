@@ -90,7 +90,7 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
 }
 
 
-#[derive(Debug, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct XBackboneConfig {
     pub token: String,
     pub url: String
