@@ -8,5 +8,11 @@
     "location_format": "/Screenshots/%Y-%m/",
     "location_root": "home.pictures",
     "xbackbone_config": null,
-    "imgur_config": null
+    "imgur_config": null,
+    "gcs_config": {
+        "use_default": true,
+        "bucket": "my-bucket.example.com",
+        "relative_path": "upload/$rand",
+        "public_url_base": "https://my-bucket.com"
+    }
 }
