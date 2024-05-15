@@ -92,7 +92,8 @@ pub async fn run_screenshot_cfg(target: Option<ImageTarget>, screenshot_kind: Sc
     }
 }
 
-pub async fn run_upload(cfg: UserConfig, location: String) {
+/// Upload file to default target
+pub async fn run_default_upload(cfg: UserConfig, location: String) {
     let c = cfg.clone();
     let t = cfg.default_target.clone();
     let h = match cfg.default_target {
