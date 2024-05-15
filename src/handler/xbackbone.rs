@@ -1,24 +1,20 @@
-use crate::{LError, config::ImageTarget, notification::NotificationKind};
+use crate::{config::UserConfig, LError};
 use reqwest::blocking::multipart;
 use crate::handler::{TargetResultData, TargetResultUploadData};
 
-pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKind)
-    -> Result<TargetResultData, LError> {
+pub fn upload(config: UserConfig, location: String)
+    -> Result<TargetResultData, LError>
+{
     let xb_cfg = match config.xbackbone_config {
         Some(ref v) => v,
         None => {
             return Err(LError::ErrorCode(36));
         }
     };
-    
-    let target_location = config.generate_location()?.clone();
-    let filename = &target_location.split('/').into_iter().last().unwrap();
+    let filename = &location.split('/').into_iter().last().unwrap();
     let filename_str = filename.to_string();
-    if crate::image_to_file(kind, target_location.clone()) == false {
-        return Err(LError::ErrorCode(30));
-    }
-    
-    let content = match std::fs::read(target_location.clone()) {
+
+    let content = match std::fs::read(location.clone()) {
         Ok(v) => v,
         Err(e) => {
             return Err(LError::ErrorCodeMsg(19, format!("{}", e)));
@@ -72,7 +68,7 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
             
             Ok(TargetResultData::Upload(TargetResultUploadData
             {
-                fs_location: target_location.clone(),
+                fs_location: location.clone(),
                 url: response_data.url.clone()
             }))
         },
@@ -83,6 +79,16 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
     }
 }
 
+pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKind)
+    -> Result<TargetResultData, LError> {
+
+    let target_location = config.generate_location()?.clone();
+    if crate::image_to_file(kind, target_location.clone()) == false {
+        return Err(LError::ErrorCode(30));
+    }
+
+    upload(config.clone(), target_location.clone())
+}
 
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct XBackboneConfig {
