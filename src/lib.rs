@@ -6,6 +6,7 @@ pub mod clipboard;
 pub mod notification;
 pub mod msgbox;
 
+use config::PostUploadAction;
 use serde::{Serialize, Deserialize};
 
 
@@ -35,6 +36,7 @@ pub enum LError {
     UnhandledProcessExitStatusS(ErrorSource, std::process::ExitStatus),
 
     UnhandledPostTargetAction(crate::config::PostTargetAction),
+    UnhandledPostUploadAction(PostUploadAction),
 
     ImageError(String, image::error::ImageError),
 
