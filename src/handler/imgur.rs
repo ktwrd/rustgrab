@@ -7,7 +7,13 @@ use std::io::Read;
 
 pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKind)
     -> Result<(), LError>{
-    
+    let im_config = match config.imgur_config {
+        Some(ref v) => v,
+        None => {
+            return Err(LError::ErrorCode(36));
+        }
+    };
+
     let location = config.generate_location()?;
     
     if crate::image_to_file(kind, location.clone()) == false {
@@ -33,7 +39,7 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
 
     // Creates Imgur Applications for sending to Imgur API
     let mut copy_link = String::new();
-    let handle = imgur::Handle::new(String::from("37562f83e04fd66"));
+    let handle = imgur::Handle::new(im_config.client_id.clone());
 
     // Uploads file to Imgur API
     match handle.upload(&image) {
@@ -63,4 +69,9 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
             Err(LError::ErrorCode(19))
         }
     }
+}
+
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+pub struct ImgurConfig {
+    pub client_id: String
 }

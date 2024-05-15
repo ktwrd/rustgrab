@@ -65,7 +65,8 @@ pub struct UserConfig {
     pub location_format: String,
     #[serde(default = "get_default_location_root")]
     pub location_root: String,
-    pub xbackbone_config: Option<crate::handler::xbackbone::XBackboneConfig>
+    pub xbackbone_config: Option<crate::handler::xbackbone::XBackboneConfig>,
+    pub imgur_config: Option<crate::handler::imgur::ImgurConfig>
 }
 fn get_default_action() -> String { CONFIG_ACTION_DEFAULT.to_string() }
 fn get_default_filename_format() -> String { FILENAME_FORMAT_DEFAULT.to_string() }
