@@ -1,8 +1,9 @@
 use crate::config::ImageTarget;
 use crate::{notification, locale, LError};
+use crate::handler::{TargetResultData, TargetResultUploadData};
 
 pub async fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKind)
-    -> Result<(), LError>{
+    -> Result<TargetResultData, LError>{
     let im_client_id = match &config.imgur_config {
         Some(v) => v.client_id.clone(),
         None => {
@@ -15,7 +16,7 @@ pub async fn run(config: crate::config::UserConfig, kind: screenshot_rs::Screens
     
     if crate::image_to_file(kind, location.clone()) == false {
         eprintln!("{}", locale::error(30));
-        return Ok(());
+        return Err(LError::ErrorCode(30));
     }
 
     let imgur_client = imgurs::ImgurClient::new(&im_client_id.clone());
@@ -30,11 +31,20 @@ pub async fn run(config: crate::config::UserConfig, kind: screenshot_rs::Screens
         return Err(LError::ImgurFailure(imgur_result));
     }
 
+    let loc_str = location.clone();
     // Send notification
-    notification::image_sent(ImageTarget::Imgur, &imgur_result.data.link, location.as_str());
+    notification::image_sent(ImageTarget::Imgur, &imgur_result.data.link, loc_str.as_str());
 
     // Copy url to clipboard
-    crate::clipboard::copy_text(imgur_result.data.link)
+    let link = imgur_result.data.link.clone();
+    match crate::clipboard::copy_text(link.clone()) {
+        Ok(_) => Ok(TargetResultData::Upload(TargetResultUploadData
+        {
+            fs_location: loc_str,
+            url: link
+        })),
+        Err(e) => Err(e)
+    }
 }
 
 pub const DEFAULT_CLIENT_ID: &str = include_str!("imgur_client_id.txt");

@@ -1,8 +1,9 @@
 use crate::{LError, config::ImageTarget, notification::NotificationKind};
 use reqwest::blocking::multipart;
+use crate::handler::{TargetResultData, TargetResultUploadData};
 
 pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKind)
-    -> Result<(), LError> {
+    -> Result<TargetResultData, LError> {
     let xb_cfg = match config.xbackbone_config {
         Some(ref v) => v,
         None => {
@@ -69,10 +70,14 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
                 return Err(LError::ErrorCodeMsg(41, format!("{}", response_data.message)));
             }
             
-            match crate::clipboard::copy_text(response_data.url) {
+            match crate::clipboard::copy_text(response_data.url.clone()) {
                 Ok(_) => {
                     crate::notification::display(ImageTarget::XBackbone, NotificationKind::ClipboardCopy);
-                    Ok(())
+                    Ok(TargetResultData::Upload(TargetResultUploadData
+                    {
+                        fs_location: target_location.clone(),
+                        url: response_data.url.clone()
+                    }))
                 },
                 Err(e) => {
                     println!("failed to copy to clipboard: {:#?}", e);

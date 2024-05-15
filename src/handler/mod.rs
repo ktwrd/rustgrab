@@ -11,6 +11,7 @@ use std::process;
 pub mod imgur;
 pub mod filesystem;
 pub mod xbackbone;
+pub mod post_upload_action;
 
 #[allow(unused, unreachable_code)]
 pub fn run(service: ImageTarget,
@@ -105,7 +106,7 @@ pub async fn runcfg(screenshot_kind: ScreenshotKind) {
         }
     }
 }
-fn inner_handle(target: ImageTarget, res: Result<(), LError>) {
+fn inner_handle(target: ImageTarget, res: Result<TargetResultData, LError>) {
     match res {
         Ok(_) => {},
         Err(e) => {
@@ -115,6 +116,19 @@ fn inner_handle(target: ImageTarget, res: Result<(), LError>) {
             panic!("Failed to run {:#?}. {:#?}", target, e);
         }
     }
+}
+
+/// OK Result for a handler target.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+pub(crate) enum TargetResultData {
+    Upload(TargetResultUploadData),
+    Filesystem(String)
+}
+/// Result data from a target in handler. Only used when the target uploads to something.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+pub(crate) struct TargetResultUploadData {
+    pub fs_location: String,
+    pub url: String
 }
 
 pub fn arg_to_kind(matches: &ArgMatches) -> Option<ScreenshotKind>

@@ -1,8 +1,9 @@
 use crate::config::{ImageTarget, UserConfig, PostTargetAction};
 use crate::{clipboard, locale, LError, notification::NotificationKind};
+use crate::handler::TargetResultData;
 
 pub fn run(config: UserConfig, kind: screenshot_rs::ScreenshotKind)
-    -> Result<(), LError> {
+    -> Result<TargetResultData, LError> {
 
     let target_location = config.generate_location()?.clone();
     if crate::image_to_file(kind, target_location.clone()) == false {
@@ -10,12 +11,19 @@ pub fn run(config: UserConfig, kind: screenshot_rs::ScreenshotKind)
         return Err(LError::ErrorCode(30));
     }
 
+    let l = target_location.clone();
     match config.post_target_action {
         PostTargetAction::CopyLocation => {
-            copy_location(target_location)
+            match copy_location(target_location) {
+                Ok(_) => Ok(TargetResultData::Filesystem(l)),
+                Err(e) => Err(e)
+            }
         },
         PostTargetAction::CopyContent => {
-            copy_content(target_location)
+            match copy_content(target_location) {
+                Ok(_) => Ok(TargetResultData::Filesystem(l)),
+                Err(e) => Err(e)
+            }
         },
         _ => {
             Err(LError::UnhandledPostTargetAction(config.post_target_action))
