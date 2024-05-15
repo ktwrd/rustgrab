@@ -17,6 +17,7 @@ Notification:
             Mastodon: Copied Toot link to clipboard
             Twitter: Copied Tweet link to clipboard
             XBackbone: Copied link to clipboard
+            GoogleCloudStorage: Copied link to clipboard
 Update:
     Installed: Installed Version
     Latest: Latest Version
@@ -77,6 +78,7 @@ Error:
     47: Failed to copy image to clipboard.
     48: Invalid default screenshot action %s
     49: Unsupported action %s for target
+    50: Auth Config for Google Cloud Storage not provided.
 Help:
     Usage: Usage
     Options: Options

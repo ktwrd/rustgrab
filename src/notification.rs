@@ -52,6 +52,7 @@ fn notification(service: ImageTarget, notification: NotificationKind) -> String 
                 ImageTarget::Mastodon => locator = &locator["Mastodon"],
                 ImageTarget::Imgur => locator = &locator["Imgur"],
                 ImageTarget::XBackbone => locator = &locator["XBackbone"],
+                ImageTarget::GoogleCloudStorage => locator = &locator["GoogleCloudStorage"],
                 _ => unreachable!("ImageTarget {:#?} is not supported for {:#?}", service, notification)
             }
         },

@@ -25,6 +25,8 @@ pub enum LError {
     GetHomeError(homedir::GetHomeError),
     Imgur(imgurs::Error),
     ImgurFailure(imgurs::ImageInfo),
+    GoogleCloudStorageHttp(google_cloud_storage::http::Error),
+    GoogleCloudAuth(google_cloud_auth::error::Error),
 
     HomeDirectoryNotSet,
     

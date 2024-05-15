@@ -9,11 +9,12 @@ use std::os::unix::process::ExitStatusExt;
 /// text: Content to copy.
 /// Err: LError::Clipboard
 pub fn copy_text(text: String) -> Result<(), LError> {
+    println!("[clipboard::copy_text] {}", &text);
     let mut clipboard = try_create_clipboard()?;
     match clipboard.set_text(&text) {
         Ok(_) => {
-            let dur = std::time::Duration::from_secs(2);
-            std::thread::sleep(dur);
+            let d = core::time::Duration::from_millis(1500);
+            std::thread::sleep(d);
             Ok(())
         },
         Err(e) => Err(LError::Clipboard(e))

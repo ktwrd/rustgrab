@@ -33,6 +33,9 @@ homedir = "0.2.1"
 imgurs = { git = "https://github.com/M3DZIK/imgurs", tag = "v0.11.3"}
 futures = "0.3.30"
 tokio = { version = "1.37", features = ["macros", "rt-multi-thread"] }
+google-cloud-storage = "0.18.0"
+rand = "0.8.5"
+google-cloud-auth = "0.15.0"
 
 [dependencies.reqwest]
 version = "0.12.4"

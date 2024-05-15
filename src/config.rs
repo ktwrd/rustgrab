@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::locale;
 use crate::LError as LError;
 use crate::helper;
+use rand::{distributions::Alphanumeric, Rng};
 
 pub const DEFAULT_SCREENSHOT_ACTION: &str = "area";
 pub const FILENAME_FORMAT_DEFAULT: &str = "%Y%m%d_%H-%H-%M.png";
@@ -125,7 +126,8 @@ pub struct UserConfig {
     #[serde(default = "get_default_location_root")]
     pub location_root: String,
     pub xbackbone_config: Option<crate::handler::xbackbone::XBackboneConfig>,
-    pub imgur_config: Option<crate::handler::imgur::ImgurConfig>
+    pub imgur_config: Option<crate::handler::imgur::ImgurConfig>,
+    pub gcs_config: Option<crate::handler::gcs::GCSConfig>
 }
 fn get_default_screenshot_type() -> String { kind_to_string(ScreenshotKind::Area) }
 fn get_default_filename_format() -> String { FILENAME_FORMAT_DEFAULT.to_string() }
@@ -144,7 +146,8 @@ impl UserConfig {
             location_format: LOCATION_FORMAT_DEFAULT.to_string(),
             location_root: LOCATION_ROOT_DEFAULT.to_string(),
             xbackbone_config: None,
-            imgur_config: None
+            imgur_config: None,
+            gcs_config: None
         }
     }
 
@@ -255,6 +258,13 @@ impl UserConfig {
         let mut data = format!("{}", &date.format(&location));
         let uuid = crate::helper::create_uuid();
         data = data.replace("$guid", &uuid);
+
+        let rv: String = rand::thread_rng()
+            .sample_iter(&Alphanumeric)
+            .take(16)
+            .map(char::from)
+            .collect();
+        data = data.replace("$rand", &rv);
 
         data
     }

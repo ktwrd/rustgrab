@@ -1,3 +1,5 @@
+use core::time;
+
 use crate::config::{ImageTarget, UserConfig, PostTargetAction};
 use crate::{clipboard, locale, LError, notification::NotificationKind};
 use crate::handler::TargetResultData;
@@ -35,6 +37,8 @@ fn copy_location(location: String) -> Result<(), LError> {
     match clipboard::copy_text(location.clone()) {
         Ok(_) => {
             crate::notification::display(ImageTarget::Filesystem, NotificationKind::ClipboardCopy);
+            let d = time::Duration::from_secs(2);
+            std::thread::sleep(d);
             Ok(())
         },
         Err(e) => {

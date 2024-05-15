@@ -10,6 +10,7 @@ pub mod imgur;
 pub mod filesystem;
 pub mod xbackbone;
 pub mod post_upload_action;
+pub mod gcs;
 
 /// Generate & Parse Config, Then call `run_default`
 pub async fn run_default_cfg() {
@@ -62,6 +63,9 @@ pub async fn run_screenshot(cfg: UserConfig, target: ImageTarget, kind: Screensh
         ImageTarget::Imgur => {
             crate::handler::imgur::run(cfg, kind).await
         },
+        ImageTarget::GoogleCloudStorage => {
+            crate::handler::gcs::screenshot(cfg, kind).await
+        }
 
         // handle stuff that we haven't, and let the user know.
         _ => {
@@ -106,6 +110,9 @@ pub async fn run_default_upload(cfg: UserConfig, location: String) {
         ImageTarget::Imgur => {
             crate::handler::imgur::upload(cfg, location).await
         },
+        ImageTarget::GoogleCloudStorage => {
+            crate::handler::gcs::upload(cfg, location).await
+        }
 
         // handle stuff that we haven't, and let the user know.
         _ => {

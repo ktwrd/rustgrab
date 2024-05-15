@@ -106,7 +106,7 @@ pub fn error(code: usize) -> String {
     let (error_txt, msg_txt) = (r.error, r.code);
 
     match code {
-        1..=47 => return format!("{} {}: {}", error_txt, code, msg_txt),
+        1..=50 => return format!("{} {}: {}", error_txt, code, msg_txt),
         _ => unreachable!("Internal Logic Error"),
     };
 }

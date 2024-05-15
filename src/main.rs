@@ -11,6 +11,7 @@ use rustgrab::{
 
 
 #[tokio::main]
+#[allow(unused_assignments, unused_variables)]
 async fn main() {
     // Individual parts the help menu
     let mut locale = LocaleValues::new();
