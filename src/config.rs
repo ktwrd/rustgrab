@@ -49,6 +49,17 @@ impl Default for PostTargetAction {
         PostTargetAction::CopyLocation
     }
 }
+/// Action that is ran after the file has been uploaded.
+/// This will be ignored when ImageTarget::FileSystem target is used.
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+pub enum PostUploadAction {
+    CopyLink
+}
+impl Default for PostUploadAction {
+    fn default() -> Self {
+        PostUploadAction::CopyLink
+    }
+}
 #[derive(Debug, Deserialize, Serialize)]
 pub struct UserConfig {
     #[serde(default = "get_default_action")]
@@ -56,8 +67,11 @@ pub struct UserConfig {
 
     #[serde(default)]
     pub default_target: ImageTarget,
+
     #[serde(default)]
     pub post_target_action: PostTargetAction,
+    #[serde(default)]
+    pub post_upload_action: PostUploadAction,
 
     #[serde(default = "get_default_filename_format")]
     pub filename_format: String,
@@ -79,6 +93,7 @@ impl UserConfig {
             default_action: CONFIG_ACTION_DEFAULT.to_string(),
             default_target: ImageTarget::default(),
             post_target_action: PostTargetAction::default(),
+            post_upload_action: PostUploadAction::default(),
             filename_format: FILENAME_FORMAT_DEFAULT.to_string(),
             location_format: LOCATION_FORMAT_DEFAULT.to_string(),
             location_root: LOCATION_ROOT_DEFAULT.to_string(),
