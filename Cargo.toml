@@ -27,10 +27,18 @@ screenshot-rs = "0.1.5"
 chrono = "0.4.38"
 serde = { version = "1.0.201", features = ["derive"] }
 serde_json = { version = "1.0.117" }
-reqwest = { version = "0.12.4", features = ["multipart", "stream", "blocking"] }
 arboard = "3.4.0"
 image = { version = "0.25.1", features = ["png"] }
 native-dialog = "0.7.0"
+homedir = "0.2.1"
+
+[dependencies.reqwest]
+version = "0.12.4"
+features = [
+    "multipart",
+    "stream",
+    "blocking"
+]
 
 # used for the "$uuid" location template
 [dependencies.uuid]
