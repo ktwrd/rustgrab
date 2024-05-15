@@ -10,7 +10,8 @@ use rustgrab::{
 };
 
 
-fn main() {
+#[tokio::main]
+async fn main() {
     // Individual parts the help menu
     let mut locale = LocaleValues::new();
     locale.generate();
@@ -84,7 +85,7 @@ fn main() {
         Some(("default", default_matches)) => {
             match handler::arg_to_kind(default_matches) {
                 Some(v) => {
-                    handler::runcfg(v);
+                    handler::runcfg(v).await;
                 },
                 None => {
                     println!("No action provided");

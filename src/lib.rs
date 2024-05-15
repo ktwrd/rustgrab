@@ -22,6 +22,8 @@ pub enum LError {
     IOS(ErrorSource, std::io::Error),
     Clipboard(arboard::Error),
     GetHomeError(homedir::GetHomeError),
+    Imgur(imgurs::Error),
+    ImgurFailure(imgurs::ImageInfo),
 
     HomeDirectoryNotSet,
     

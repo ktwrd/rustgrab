@@ -70,7 +70,7 @@ pub fn run(service: ImageTarget,
     Ok(())
 }
 
-pub fn runcfg(screenshot_kind: ScreenshotKind) {
+pub async fn runcfg(screenshot_kind: ScreenshotKind) {
     let location = crate::config::UserConfig::get_config_location();
     if std::path::Path::new(location.as_str()).exists() == false{
         eprintln!("{} {}", locale::error(43), location);
@@ -88,7 +88,9 @@ pub fn runcfg(screenshot_kind: ScreenshotKind) {
                     inner_handle(cfg.default_target, crate::handler::xbackbone::run(cfg, screenshot_kind));
                 },
                 ImageTarget::Imgur => {
-                    inner_handle(cfg.default_target, crate::handler::imgur::run(cfg, screenshot_kind));
+                    let t = cfg.default_target.clone();
+                    let r = crate::handler::imgur::run(cfg, screenshot_kind).await;
+                    inner_handle(t, r);
                 },
 
                 // handle stuff that we haven't, and let the user know.
