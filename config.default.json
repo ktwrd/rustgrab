@@ -1,7 +1,9 @@
 {
-    "default_action": "Area",
+    "default_action": "Screenshot",
+    "default_screenshot_type": "Area",
     "default_target": "Filesystem",
-    "fs_target_post": "File",
+    "post_target_action": "CopyLocation",
+    "post_upload_action": "CopyLink",
     "filename_format": "%Y%m%d_%H-%H-%M.png",
     "location_format": "/Screenshots/%Y-%m/",
     "location_root": "home.pictures",
