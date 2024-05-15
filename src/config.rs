@@ -85,13 +85,27 @@ impl UserConfig {
         }
     }
 
+    /// Get the home directory.
+    /// Returns OK with an empty string when PathBuf::to_str() returns None
+    /// Returns Err when homedir::get_my_home() OK is None, or is Err
+    fn get_home_dir() -> Result<String, LError> {
+        match homedir::get_my_home() {
+            Ok(v) => {
+                match v {
+                    Some(x) => Ok(x.to_str().unwrap_or("").to_string()),
+                    None => Err(LError::HomeDirectoryNotSet)
+                }
+            },
+            Err(e) => Err(LError::GetHomeError(e))
+        }
+    }
+
     /// Try and get the config location
     /// Will use $home_dir/.config/rustgrab/config.json
-    /// When std::env::home_dir() fails, or unwrapping it fails, then this will just return "rustgrab.config.json"
+    /// When get_home_dir() fails, or unwrapping it fails, then this will just return "rustgrab.config.json"
     pub fn get_config_location() -> String {
-        match std::env::home_dir() {
-            Some(d) => {
-                let mut s = d.to_str().unwrap_or("").to_string();
+        match UserConfig::get_home_dir() {
+            Ok(mut s) => {
                 if s.ends_with("/") {
                     s.push('/');
                 }
@@ -104,7 +118,8 @@ impl UserConfig {
                     "rustgrab.config.json".to_string()
                 }
             },
-            None => {
+            Err(e) => {
+                eprintln!("[config.UserConfig::get_config_location] [WARN] failed to get homedir {:#?}", e);
                 "rustgrab.config.json".to_string()
             }
         }
