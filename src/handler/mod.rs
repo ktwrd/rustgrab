@@ -1,12 +1,11 @@
 use clap::ArgMatches;
 use screenshot_rs::ScreenshotKind;
 use crate::{
-    locale,
-    LError,
-    MessageKind,
-    config::ImageTarget
+    config::{ImageTarget, UserConfig}, locale, LError, MessageKind
 };
 use std::process;
+
+use self::post_upload_action::PostUploadActionHandler;
 
 pub mod imgur;
 pub mod filesystem;
@@ -81,17 +80,18 @@ pub async fn runcfg(screenshot_kind: ScreenshotKind) {
     println!("location: {}", location);
     match crate::config::UserConfig::parse() {
         Ok(cfg) => {
+            let c = cfg.clone();
             match cfg.default_target {
                 ImageTarget::Filesystem => {
-                    inner_handle(cfg.default_target, crate::handler::filesystem::run(cfg, screenshot_kind));
+                    inner_handle(cfg.default_target, crate::handler::filesystem::run(cfg, screenshot_kind), c);
                 },
                 ImageTarget::XBackbone => {
-                    inner_handle(cfg.default_target, crate::handler::xbackbone::run(cfg, screenshot_kind));
+                    inner_handle(cfg.default_target, crate::handler::xbackbone::run(cfg, screenshot_kind), c);
                 },
                 ImageTarget::Imgur => {
                     let t = cfg.default_target.clone();
                     let r = crate::handler::imgur::run(cfg, screenshot_kind).await;
-                    inner_handle(t, r);
+                    inner_handle(t, r, c);
                 },
 
                 // handle stuff that we haven't, and let the user know.
@@ -106,27 +106,45 @@ pub async fn runcfg(screenshot_kind: ScreenshotKind) {
         }
     }
 }
-fn inner_handle(target: ImageTarget, res: Result<TargetResultData, LError>) {
+fn inner_handle(target: ImageTarget, res: Result<TargetResultData, LError>, cfg: UserConfig) {
     match res {
-        Ok(_) => {},
+        Ok(v) => {
+            let x = PostUploadActionHandler {
+                config: cfg,
+                target: target.clone()
+            };
+            match v {
+                TargetResultData::Upload(u) => match x.run(u) {
+                    Err(e) => {
+                        handle_lerror_fatal(target, e);
+                    },
+                    _ => {}
+                },
+                _ => println!("{:#?} not handled for a post-upload action", v)
+            };
+        },
         Err(e) => {
-            crate::msgbox::error_custom(
-                format!("Failed to handle target {:#?}\n\n{:#?}", target, e),
-                format!("Failed to handle target"));
-            panic!("Failed to run {:#?}. {:#?}", target, e);
+            handle_lerror_fatal(target, e);
         }
     }
+}
+/// Handle fatal errors for inner handling.
+fn handle_lerror_fatal(target: ImageTarget, e: LError) {
+    crate::msgbox::error_custom(
+        format!("Failed to handle target {:#?}\n\n{:#?}", target, e),
+        format!("Failed to handle target"));
+    panic!("Failed to run {:#?}. {:#?}", target, e);
 }
 
 /// OK Result for a handler target.
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-pub(crate) enum TargetResultData {
+pub enum TargetResultData {
     Upload(TargetResultUploadData),
     Filesystem(String)
 }
 /// Result data from a target in handler. Only used when the target uploads to something.
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-pub(crate) struct TargetResultUploadData {
+pub struct TargetResultUploadData {
     pub fs_location: String,
     pub url: String
 }

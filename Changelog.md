@@ -1,5 +1,5 @@
 #### [0.7.4] - 2024-05-15
-- Remove support for Twitter and Mastodon
+- Remove support for Twitter and Mastodon.
 - Drop gtk/gdk/dio dependency.
 - Add support for post-upload actions.
 - **Note** manual file will be out-of-date until the codebase refactor is complete (est. v0.8 maybe)

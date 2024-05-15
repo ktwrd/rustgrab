@@ -37,14 +37,11 @@ pub async fn run(config: crate::config::UserConfig, kind: screenshot_rs::Screens
 
     // Copy url to clipboard
     let link = imgur_result.data.link.clone();
-    match crate::clipboard::copy_text(link.clone()) {
-        Ok(_) => Ok(TargetResultData::Upload(TargetResultUploadData
-        {
-            fs_location: loc_str,
-            url: link
-        })),
-        Err(e) => Err(e)
-    }
+    Ok(TargetResultData::Upload(TargetResultUploadData
+    {
+        fs_location: loc_str,
+        url: link
+    }))
 }
 
 pub const DEFAULT_CLIENT_ID: &str = include_str!("imgur_client_id.txt");

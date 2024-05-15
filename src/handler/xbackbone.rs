@@ -70,22 +70,11 @@ pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKin
                 return Err(LError::ErrorCodeMsg(41, format!("{}", response_data.message)));
             }
             
-            match crate::clipboard::copy_text(response_data.url.clone()) {
-                Ok(_) => {
-                    crate::notification::display(ImageTarget::XBackbone, NotificationKind::ClipboardCopy);
-                    Ok(TargetResultData::Upload(TargetResultUploadData
-                    {
-                        fs_location: target_location.clone(),
-                        url: response_data.url.clone()
-                    }))
-                },
-                Err(e) => {
-                    println!("failed to copy to clipboard: {:#?}", e);
-                    eprintln!("{}", crate::locale::error(42));
-                    crate::notification::error(42);
-                    Err(e)
-                }
-            }
+            Ok(TargetResultData::Upload(TargetResultUploadData
+            {
+                fs_location: target_location.clone(),
+                url: response_data.url.clone()
+            }))
         },
         _ => {
             eprintln!("handler.xbackbone.run->status {:#?}", status);

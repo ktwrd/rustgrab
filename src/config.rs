@@ -53,14 +53,15 @@ impl Default for PostTargetAction {
 /// This will be ignored when ImageTarget::FileSystem target is used.
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 pub enum PostUploadAction {
-    CopyLink
+    CopyLink,
+    ShortenLink
 }
 impl Default for PostUploadAction {
     fn default() -> Self {
         PostUploadAction::CopyLink
     }
 }
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct UserConfig {
     #[serde(default = "get_default_action")]
     pub default_action: String,
