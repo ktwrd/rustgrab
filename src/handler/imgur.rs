@@ -5,6 +5,12 @@ use open;
 use std::fs::File;
 use std::io::Read;
 
+// TODO replace the imgur library with the imgurs library
+// doing this will make this work on future versions of rust
+// the library, traitobject, is used by hyper which imgur uses
+// and that breaks some stuff. imgurs is a good alternative
+// to the imgur library, so that *will* be used later.
+
 pub fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKind)
     -> Result<(), LError>{
     let im_config = match config.imgur_config {
