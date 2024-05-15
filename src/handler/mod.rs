@@ -92,6 +92,28 @@ pub async fn run_screenshot_cfg(target: Option<ImageTarget>, screenshot_kind: Sc
     }
 }
 
+pub async fn run_upload(cfg: UserConfig, location: String) {
+    let c = cfg.clone();
+    let t = cfg.default_target.clone();
+    let h = match cfg.default_target {
+        ImageTarget::Filesystem => {
+            Err(LError::ErrorCodeMsg(49, format!("{:#?}", TargetAction::Upload)))
+        },
+        ImageTarget::XBackbone => {
+            crate::handler::xbackbone::upload(cfg, location)
+        },
+        ImageTarget::Imgur => {
+            crate::handler::imgur::upload(cfg, location).await
+        },
+
+        // handle stuff that we haven't, and let the user know.
+        _ => {
+            Err(LError::ErrorCodeMsg(45, format!("{:#?}", t)))
+        }
+    };
+    inner_handle(t, h, c);
+}
+
 /// Handle the result of a handle (i.e; crate::handler::imgur::run)
 fn inner_handle(target: ImageTarget, res: Result<TargetResultData, LError>, cfg: UserConfig) {
     match res {

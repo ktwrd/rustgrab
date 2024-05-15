@@ -76,6 +76,7 @@ Error:
     46: Failed to parse config.
     47: Failed to copy image to clipboard.
     48: Invalid default screenshot action %s
+    49: Unsupported action %s for target
 Help:
     Usage: Usage
     Options: Options
