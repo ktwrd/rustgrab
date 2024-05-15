@@ -21,6 +21,9 @@ pub enum LError {
     IO(std::io::Error),
     IOS(ErrorSource, std::io::Error),
     Clipboard(arboard::Error),
+    GetHomeError(homedir::GetHomeError),
+
+    HomeDirectoryNotSet,
     
     ErrorCode(usize),
     ErrorCodeMsg(usize, String),
