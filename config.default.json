@@ -5,5 +5,6 @@
     "filename_format": "%Y%m%d_%H-%H-%M.png",
     "location_format": "/Screenshots/%Y-%m/",
     "location_root": "home.pictures",
-    "xbackbone_config": null
+    "xbackbone_config": null,
+    "imgur_config": null
 }
