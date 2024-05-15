@@ -1,5 +1,5 @@
 use std::env;
-use yaml_rust::YamlLoader;
+use yaml_rust::{Yaml, YamlLoader};
 
 pub struct LocaleValues {
     pub help: String,
@@ -13,7 +13,11 @@ pub struct LocaleValues {
     pub imgur: String,
     pub twitter_auth: String,
     pub mastodon_auth: String,
-    pub default_action: String
+    pub default_action: String,
+    pub action_screenshot: String
+}
+fn try_get_yaml(data: &Yaml, failover: &str) -> String {
+    data.as_str().unwrap_or(failover).to_string()
 }
 impl LocaleValues {
     pub fn new() -> Self
@@ -30,7 +34,8 @@ impl LocaleValues {
             imgur: String::new(),
             twitter_auth: String::new(),
             mastodon_auth: String::new(),
-            default_action: String::new()
+            default_action: String::new(),
+            action_screenshot: String::new()
         }
     }
     pub fn generate(&mut self) -> &mut Self
@@ -49,6 +54,7 @@ impl LocaleValues {
         self.twitter_auth = locator["Twitter"]["Auth"].as_str().unwrap_or("<twitter_auth>").to_string();
         self.mastodon_auth = locator["Mastodon"]["Auth"].as_str().unwrap_or("<mastodon_auth>").to_string();
         self.default_action = locator["DefaultAction"].as_str().unwrap_or("<default action from config>").to_string();
+        self.action_screenshot = try_get_yaml(&locator["Action"]["Screenshot"], "<screenshot action>");
         self
     }
 }

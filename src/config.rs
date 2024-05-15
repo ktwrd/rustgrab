@@ -1,9 +1,10 @@
+use screenshot_rs::ScreenshotKind;
 use serde::{Deserialize, Serialize};
 use crate::locale;
 use crate::LError as LError;
 use crate::helper;
 
-pub const CONFIG_ACTION_DEFAULT: &str = "area";
+pub const DEFAULT_SCREENSHOT_ACTION: &str = "area";
 pub const FILENAME_FORMAT_DEFAULT: &str = "%Y%m%d_%H-%H-%M.png";
 pub const LOCATION_ROOT_DEFAULT: &str = "home.pictures";
 pub const LOCATION_FORMAT_DEFAULT: &str = "/Screenshots/%Y-%m/";
@@ -61,16 +62,59 @@ impl Default for PostUploadAction {
         PostUploadAction::CopyLink
     }
 }
+/// What action should be taken.
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+pub enum TargetAction {
+    Screenshot,
+    Upload
+}
+impl Default for TargetAction {
+    fn default() -> Self {
+        TargetAction::Screenshot
+    }
+}
+/// Try and parse UserConfig.default_screenshot_type
+pub fn parse_screenshot_action(action: String) -> Result<ScreenshotKind, LError>
+{
+    let mut m = action.to_uppercase();
+    m = m.trim().to_string();
+    match m.as_str() {
+        "AREA" => Ok(ScreenshotKind::Area),
+        "A" => Ok(ScreenshotKind::Area),
+        "WINDOW" => Ok(ScreenshotKind::Window),
+        "W" => Ok(ScreenshotKind::Window),
+        "FULL" => Ok(ScreenshotKind::Full),
+        "F" => Ok(ScreenshotKind::Full),
+        _ => {
+            Err(LError::ScreenshotKindParseFailure(m.clone()))
+        }
+    }
+}
+pub fn kind_to_string(kind: ScreenshotKind) -> String
+{
+    match kind {
+        ScreenshotKind::Area => "Area",
+        ScreenshotKind::Full => "Full",
+        ScreenshotKind::Window => "Window"
+    }.to_string()
+}
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct UserConfig {
-    #[serde(default = "get_default_action")]
-    pub default_action: String,
+    /// Default action that is used when the "default" sub-command is used.
+    #[serde(default)]
+    pub default_action: TargetAction,
+    /// Default action that is used when no screenshot kind is provided via the CLI.
+    #[serde(default = "get_default_screenshot_type")]
+    pub default_screenshot_type: String,
 
+    /// Default image/upload target when taking a screenshot or uploading a file.
     #[serde(default)]
     pub default_target: ImageTarget,
 
+    /// Action that happens after a screenshot is taken or before a file is uploaded.
     #[serde(default)]
     pub post_target_action: PostTargetAction,
+    /// Action that is taken after a screenshot/file is uploaded.
     #[serde(default)]
     pub post_upload_action: PostUploadAction,
 
@@ -83,7 +127,7 @@ pub struct UserConfig {
     pub xbackbone_config: Option<crate::handler::xbackbone::XBackboneConfig>,
     pub imgur_config: Option<crate::handler::imgur::ImgurConfig>
 }
-fn get_default_action() -> String { CONFIG_ACTION_DEFAULT.to_string() }
+fn get_default_screenshot_type() -> String { kind_to_string(ScreenshotKind::Area) }
 fn get_default_filename_format() -> String { FILENAME_FORMAT_DEFAULT.to_string() }
 fn get_default_location_format() -> String { LOCATION_FORMAT_DEFAULT.to_string() }
 fn get_default_location_root() -> String { LOCATION_ROOT_DEFAULT.to_string() }
@@ -91,7 +135,8 @@ impl UserConfig {
     /// Create a new instance of UserConfig
     pub fn new() -> Self {
         Self {
-            default_action: CONFIG_ACTION_DEFAULT.to_string(),
+            default_action: TargetAction::default(),
+            default_screenshot_type: get_default_screenshot_type(),
             default_target: ImageTarget::default(),
             post_target_action: PostTargetAction::default(),
             post_upload_action: PostUploadAction::default(),
@@ -239,5 +284,22 @@ impl UserConfig {
         }
 
         formatted_location
+    }
+}
+pub(crate) fn cfg_init() -> Result<String, (usize, String)> {
+    let location = crate::config::UserConfig::get_config_location();
+    if std::path::Path::new(location.as_str()).exists() == false{
+        eprintln!("{} {}", locale::error(43), location);
+        return Err((43, location));
+    }
+    Ok(location)
+}
+pub(crate) fn cfg_init_or_die() -> String {
+    match cfg_init() {
+        Ok(v) => v,
+        Err((ec, es)) => {
+            crate::msgbox::error_msg(ec, es);
+            std::process::exit(1);
+        }
     }
 }

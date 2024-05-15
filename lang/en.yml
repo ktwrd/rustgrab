@@ -75,6 +75,7 @@ Error:
     45: Target %s has not been implemented.
     46: Failed to parse config.
     47: Failed to copy image to clipboard.
+    48: Invalid default screenshot action %s
 Help:
     Usage: Usage
     Options: Options
@@ -99,3 +100,6 @@ Help:
         Options: Mastodon Options
         Auth: Authenticate with Mastodon
     Examples: Examples
+    Action:
+        Default: Default Action. Will use default_action from config file.
+        Screenshot: Takes a screenshot.

@@ -1,9 +1,8 @@
 use clap::ArgMatches;
 use screenshot_rs::ScreenshotKind;
 use crate::{
-    config::{ImageTarget, UserConfig}, locale, LError, MessageKind
+    config::{cfg_init_or_die, ImageTarget, TargetAction, UserConfig}, LError
 };
-use std::process;
 
 use self::post_upload_action::PostUploadActionHandler;
 
@@ -12,93 +11,79 @@ pub mod filesystem;
 pub mod xbackbone;
 pub mod post_upload_action;
 
-#[allow(unused, unreachable_code)]
-pub fn run(service: ImageTarget,
-            create_file_when_not_set: bool,
-            target_file: Option<String>,
-            screenshot_kind: Option<ScreenshotKind>)
-    -> Result<(), LError>
-{
-    let mut has_screenshot = match target_file {
-        Some(_) => true,
-        None => false
-    };
-    let location = match target_file {
-        Some(v) => v,
-        None => {
-            let i = crate::config::UserConfig::new();
-            match i.generate_location() {
-                Ok(v) => v,
-                Err(e) => {
-                    return Err(e);
-                }
-            }
+/// Generate & Parse Config, Then call `run_default`
+pub async fn run_default_cfg() {
+    let _ = crate::config::cfg_init_or_die();
+    match crate::config::UserConfig::parse() {
+        Ok(cfg) => {
+            run_default(cfg).await;
+        },
+        Err(e) => {
+            crate::msgbox::error(46);
+            panic!("Failed to get config.\n{:#?}", e);
         }
     };
-    let kind = match screenshot_kind {
-        Some(v) => v,
-        None => {
-            println!("[handler.run] No screenshot kind was provided, defaulting to Area");
-            ScreenshotKind::Area
-        }
-    };
-
-    let mut success = false;
-    let mut image_called = false;
-    if has_screenshot {
-        success = crate::image_to_file(kind, location);
-        image_called = true;
-    } else {
-        if create_file_when_not_set {
-            success = crate::image_to_file(kind, location);
-            image_called = true;
-        }
-    }
-
-    if success == false && image_called == true {
-        eprintln!("[handler.run] failed to create screenshot. assuming it was probably aborted by user.");
-        return Ok(());
-    }
-
-    let mut message_kind = MessageKind::Text;
-    if has_screenshot || (image_called && success) {
-        message_kind = MessageKind::Image;
-    }
-
-    todo!("use the dialog package for generating the old method of a dialog for tweet/toot");
-    //crate::dialog::dialog(service, message_kind);
-    Ok(())
 }
 
-pub async fn runcfg(screenshot_kind: ScreenshotKind) {
-    let location = crate::config::UserConfig::get_config_location();
-    if std::path::Path::new(location.as_str()).exists() == false{
-        eprintln!("{} {}", locale::error(43), location);
-        crate::notification::error(43);
-        process::exit(1);
+/// Run the default action & target specified in the config file.
+pub async fn run_default(cfg: UserConfig) {
+    let default_action = cfg.default_action.clone();
+    match default_action.clone() {
+        TargetAction::Screenshot => run_default_screenshot(cfg).await,
+        _ => {
+            crate::msgbox::error_msg(45, format!("{:#?}", default_action));
+            panic!("Unhandled default action {:#?}", default_action);
+        }
     }
+}
+/// Take a screenshot with the default kind & target defined in the config file.
+pub async fn run_default_screenshot(cfg: UserConfig) {
+    let screenshot_type = match crate::config::parse_screenshot_action(cfg.default_screenshot_type.clone()) {
+        Ok(v) => v,
+        Err(_) => {
+            crate::msgbox::error_msg(48, cfg.default_screenshot_type);
+            std::process::exit(1);
+        }
+    };
+    run_screenshot(cfg.clone(), cfg.default_target, screenshot_type).await
+}
+
+/// Take a screenshot while providing the Target and kind.
+pub async fn run_screenshot(cfg: UserConfig, target: ImageTarget, kind: ScreenshotKind) {
+    let c = cfg.clone();
+    let t = cfg.default_target.clone();
+    let h = match cfg.default_target {
+        ImageTarget::Filesystem => {
+            crate::handler::filesystem::run(cfg, kind)
+        },
+        ImageTarget::XBackbone => {
+            crate::handler::xbackbone::run(cfg, kind)
+        },
+        ImageTarget::Imgur => {
+            crate::handler::imgur::run(cfg, kind).await
+        },
+
+        // handle stuff that we haven't, and let the user know.
+        _ => {
+            Err(LError::ErrorCodeMsg(45, format!("{:#?}", target)))
+        }
+    };
+    inner_handle(t, h, c);
+}
+
+/// Generate & Parse Config, then call run_screenshot
+/// default_target will be used when target is None.
+pub async fn run_screenshot_cfg(target: Option<ImageTarget>, screenshot_kind: ScreenshotKind) {
+    let location = cfg_init_or_die();
     println!("location: {}", location);
     match crate::config::UserConfig::parse() {
         Ok(cfg) => {
             let c = cfg.clone();
-            match cfg.default_target {
-                ImageTarget::Filesystem => {
-                    inner_handle(cfg.default_target, crate::handler::filesystem::run(cfg, screenshot_kind), c);
-                },
-                ImageTarget::XBackbone => {
-                    inner_handle(cfg.default_target, crate::handler::xbackbone::run(cfg, screenshot_kind), c);
-                },
-                ImageTarget::Imgur => {
-                    let t = cfg.default_target.clone();
-                    let r = crate::handler::imgur::run(cfg, screenshot_kind).await;
-                    inner_handle(t, r, c);
-                },
-
-                // handle stuff that we haven't, and let the user know.
-                _ => {
-                    crate::notification::error_msg(45, format!("{:#?}", cfg.default_target));
-                }
+            let t = match target {
+                Some(v) => v,
+                None => cfg.default_target.clone()
             };
+            run_screenshot(c, t, screenshot_kind).await;
         },
         Err(e) => {
             crate::msgbox::error(46);
@@ -106,6 +91,8 @@ pub async fn runcfg(screenshot_kind: ScreenshotKind) {
         }
     }
 }
+
+/// Handle the result of a handle (i.e; crate::handler::imgur::run)
 fn inner_handle(target: ImageTarget, res: Result<TargetResultData, LError>, cfg: UserConfig) {
     match res {
         Ok(v) => {
@@ -128,7 +115,9 @@ fn inner_handle(target: ImageTarget, res: Result<TargetResultData, LError>, cfg:
         }
     }
 }
+
 /// Handle fatal errors for inner handling.
+/// Shows message box then panics.
 fn handle_lerror_fatal(target: ImageTarget, e: LError) {
     crate::msgbox::error_custom(
         format!("Failed to handle target {:#?}\n\n{:#?}", target, e),

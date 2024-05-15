@@ -36,7 +36,17 @@ async fn main() {
                 .about(locale.default_action.clone())
                 .subcommand(Command::new("area").about(locale.area.clone()))
                 .subcommand(Command::new("window").about(locale.window.clone()))
-                .subcommand(Command::new("full").about(locale.full.clone())))
+                .subcommand(Command::new("full").about(locale.full.clone()))
+        )
+        .subcommand(
+            Command::new("screenshot")
+                .version(crate_version!())
+                .author(crate_authors!())
+                .about(locale.action_screenshot.clone())
+                .subcommand(Command::new("area").about(locale.area.clone()))
+                .subcommand(Command::new("window").about(locale.window.clone()))
+                .subcommand(Command::new("full").about(locale.full.clone()))
+        )
         /*.subcommand(
             Command::new("toot")
                 .version(crate_version!())
@@ -70,7 +80,7 @@ async fn main() {
                 .subcommand(Command::new("full").about(locale.Full.clone())),
         )*/;
 
-    /*let mut target_file: Option<String> = None;
+    let mut target_file: Option<String> = None;
     for a in cmd.clone().get_arguments().into_iter() {
         let a_id_str = a.get_id().to_string();
         if a_id_str == "file".to_string() {
@@ -80,30 +90,21 @@ async fn main() {
                 target_file = Some(a.to_string());
             }
         }
-    }*/
+    }
     match cmd.clone().get_matches().subcommand() {
-        Some(("default", default_matches)) => {
-            match handler::arg_to_kind(default_matches) {
+        Some(("default", _)) => {
+            handler::run_default_cfg().await;
+        },
+        Some(("screenshot", screenshot_matches)) => {
+            match handler::arg_to_kind(screenshot_matches) {
                 Some(v) => {
-                    handler::runcfg(v).await;
+                    handler::run_screenshot_cfg(None, v).await;
                 },
                 None => {
                     println!("No action provided");
                 }
             }
-        },
-        /*Some(("toot", toot_matches)) => {
-            let target_kind = handler::arg_to_kind(toot_matches);
-            handler::run(ImageTarget::Mastodon, true, target_file, target_kind);
-        },
-        Some(("tweet", tweet_matches)) => {
-            let target_kind = handler::arg_to_kind(tweet_matches);
-            handler::run(ImageTarget::Mastodon, target_file != None, target_file, target_kind);
-        },
-        Some(("imgur", imgur_matches)) => {
-            let target_kind = handler::arg_to_kind(imgur_matches);
-            handler::run(ImageTarget::Imgur, target_file != None, target_file, target_kind);
-        },*/
+        }
         _ => {
             println!("Nothing provided or sub-command is not supported!");
         },

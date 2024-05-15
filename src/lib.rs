@@ -38,6 +38,8 @@ pub enum LError {
     UnhandledPostTargetAction(crate::config::PostTargetAction),
     UnhandledPostUploadAction(PostUploadAction),
 
+    ScreenshotKindParseFailure(String),
+
     ImageError(String, image::error::ImageError),
 
     UnhandledFileExtension(String)
