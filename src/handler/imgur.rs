@@ -1,16 +1,9 @@
-use crate::config::ImageTarget;
+use crate::config::{ImageTarget, UserConfig};
 use crate::{notification, locale, LError};
 use crate::handler::{TargetResultData, TargetResultUploadData};
 
 pub async fn run(config: crate::config::UserConfig, kind: screenshot_rs::ScreenshotKind)
     -> Result<TargetResultData, LError>{
-    let im_client_id = match &config.imgur_config {
-        Some(v) => v.client_id.clone(),
-        None => {
-            eprintln!("[handler::imgur::run] no client_id in config, using own.");
-            String::from(DEFAULT_CLIENT_ID)
-        }
-    };
 
     let location = config.generate_location()?;
     
@@ -18,6 +11,20 @@ pub async fn run(config: crate::config::UserConfig, kind: screenshot_rs::Screens
         eprintln!("{}", locale::error(30));
         return Err(LError::ErrorCode(30));
     }
+
+    upload(config.clone(), location).await
+}
+
+pub async fn upload(config: UserConfig, location: String)
+    -> Result<TargetResultData, LError>
+{
+    let im_client_id = match &config.imgur_config {
+        Some(v) => v.client_id.clone(),
+        None => {
+            eprintln!("[handler::imgur::run] no client_id in config, using own.");
+            String::from(DEFAULT_CLIENT_ID)
+        }
+    };
 
     let imgur_client = imgurs::ImgurClient::new(&im_client_id.clone());
     let imgur_result = match imgur_client.upload_image(&location).await {
