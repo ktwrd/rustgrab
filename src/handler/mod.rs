@@ -1,7 +1,7 @@
 use clap::ArgMatches;
 use screenshot_rs::ScreenshotKind;
 use crate::{
-    config::{cfg_init_or_die, ImageTarget, TargetAction, UserConfig}, LError
+    config::{cfg_init_or_die, ImageTarget, TargetAction, UserConfig}, locale, LError
 };
 
 use self::post_upload_action::PostUploadActionHandler;
@@ -149,8 +149,20 @@ fn inner_handle(target: ImageTarget, res: Result<TargetResultData, LError>, cfg:
 /// Handle fatal errors for inner handling.
 /// Shows message box then panics.
 fn handle_lerror_fatal(target: ImageTarget, e: LError) {
+    let mut show_extended = true;
+    let content = match &e {
+        LError::ErrorCodeMsg(code, val) => {
+            show_extended = false;
+            locale::error_msg(*code, val.clone())
+        },
+        _ => format!("{:#?}", e)
+    };
+    let mut msgbox_text = format!("Failed to handle target {:#?}\n\n{:#?}", target, content);
+    if show_extended == false {
+        msgbox_text = content;
+    }
     crate::msgbox::error_custom(
-        format!("Failed to handle target {:#?}\n\n{:#?}", target, e),
+        msgbox_text,
         format!("Failed to handle target"));
     panic!("Failed to run {:#?}. {:#?}", target, e);
 }
