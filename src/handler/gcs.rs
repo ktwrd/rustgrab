@@ -34,6 +34,8 @@ pub async fn upload(config: UserConfig, location: String)
     let current_date = chrono::Local::now();
     relative_location = crate::config::UserConfig::format_location(relative_location.clone(), &current_date);
 
+    crate::notification::debug(String::from("Uploading"));
+
     let client = create_gcs_client(config.clone()).await?;
 
     let upload_type = UploadType::Simple(Media::new(relative_location.clone()));
