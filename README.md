@@ -34,10 +34,31 @@ Screenshot Utility made in Rust for ex-ShareX Users.
 
 Screenshot handling is done with [screenshot-rs](https://crates.io/crates/screenshot-rs).
 #### Tested on
-- Debian Trixie w/ KDE 5 (2024/05/12)
+- Debian Trixie w/ KDE 5 (2024/05/16)
 
 ## How to Use
-Currently pending a rewrite.
+
+### Google Cloud Storage
+To use the Google Cloud Storage target, you must have the following;
+- `gcloud` CLI installed
+- An existing Google Cloud Storage Bucket
+
+If you wish to not use a service account, you can easily create credentials with `gcloud auth application-default login`, which will create credentials for the current project that you're authenticated as.
+
+Once you've done that, set your `gcs_config` property in your config to the following;
+```json
+{
+    "use_default": false,
+    "auth_cfg_location": "/home/myuser/.config/gcloud/application_default_credentials.json",
+    "bucket": "my_bucket_name",
+    "relative_path": "upload/$rand",
+    "public_url_base": null
+}
+```
+
+Once you've modified your config, you can now change your default target to `GoogleCloudStorage` so rustgrab will upload to your Google Cloud Storage bucket by default.
+
+**Note** `public_base_url` will default to `https://storage.googleapis.com/$bucket_name` where `$bucket_name` is the value of `bucket` in `gcs_config`.
 
 ## Language support
 * English
