@@ -110,6 +110,10 @@ pub fn error(code: usize) -> String {
         _ => unreachable!("Internal Logic Error"),
     };
 }
+pub fn error_msg(code: usize, replacement: String) -> String {
+    let d = error(code);
+    d.replace("%s", &replacement)
+}
 
 pub struct ErrorRawValue {
     error: String,
