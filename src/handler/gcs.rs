@@ -50,9 +50,15 @@ pub async fn upload(config: UserConfig, location: String)
 
     match data {
         Ok(_) => {
+            let mut base_url = gcs_cfg.public_url_base.clone().unwrap_or(String::from(DEFAULT_BASE_URL));
+            base_url = base_url.replace("$bucket", &gcs_cfg.bucket);
+            if base_url.ends_with('/') {
+                base_url.pop();
+            }
+            
             Ok(TargetResultData::Upload(TargetResultUploadData{
                 fs_location: location,
-                url: format!("{}/{}", gcs_cfg.public_url_base, relative_location)
+                url: format!("{}/{}", base_url, relative_location)
             }))
         },
         Err(e) => {
@@ -114,6 +120,8 @@ async fn get_gcs_config(config: UserConfig) -> Result<GCSClientConfig, LError> {
         }
     }
 }
+
+pub const DEFAULT_BASE_URL: &str = "https://storage.googleapis.com/$bucket";
 pub enum GCSAuthFrom {
     Default,
     SALocation,
@@ -126,5 +134,5 @@ pub struct GCSConfig {
 
     pub bucket: String,
     pub relative_path: String,
-    pub public_url_base: String
+    pub public_url_base: Option<String>
 }
