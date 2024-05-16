@@ -22,7 +22,7 @@ pub fn message_dialog(text: String, title: String, msg_type: MessageType) {
         .set_type(msg_type)
         .set_title(title.as_str())
         .set_text(text.as_str())
-        .show_confirm() {
+        .show_alert() {
         eprintln!("[msgbox.message_dialog] failed to show dialog: {:#?}", e);
         eprintln!("[msgbox.message_dialog] failed to show dialog\ntext: {}\ntitle: {}\ntype: {}",
             text,
