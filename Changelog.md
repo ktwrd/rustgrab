@@ -1,3 +1,12 @@
+#### [0.7.6] - 2024-05-17
+- Update README
+- Show message boxes as Alerts instead of Yes/No.
+- Display Error Codes properly on app exit.
+- Google Cloud Storage
+    - Make `public_url_base` optional. Will default to `https://storage.googleapis.com/$bucket`.
+    - Show notification when uploading.
+- Fix clipboard not being set properly on Linux.
+
 #### [0.7.5] - 2024-05-15
 - Add support for Google Cloud Storage
 - Fix some bugs with copying to clipboard
