@@ -20,8 +20,9 @@ impl PostUploadActionHandler
         match crate::clipboard::copy_text(url) {
             Ok(_) => {
                 crate::notification::display(self.target, NotificationKind::ClipboardCopy);
-                let d = core::time::Duration::from_secs(2);
+                let d = std::time::Duration::from_secs(2);
                 std::thread::sleep(d);
+                println!("[PostUploadActionHandler.copy_url] done");
                 Ok(())
             },
             Err(e) => {
