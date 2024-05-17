@@ -6,6 +6,7 @@ use std::io::Cursor;
 use std::os::unix::process::ExitStatusExt;
 
 /// Copy text to clipboard
+/// This function sleeps for 1.5s after copying to the clipboard.
 /// text: Content to copy.
 /// Err: LError::Clipboard
 pub fn copy_text(text: String) -> Result<(), LError> {
@@ -13,6 +14,11 @@ pub fn copy_text(text: String) -> Result<(), LError> {
     let mut clipboard = try_create_clipboard()?;
     match clipboard.set_text(&text) {
         Ok(_) => {
+            // NOTE we have to sleep inside of this function for some weird reason.
+            // made an issue for this on the arboard github;
+            // https://github.com/1Password/arboard/issues/154
+            // sleeping outside of this function will not work.
+            // could be related to the borrow checker?
             let d = core::time::Duration::from_millis(1500);
             std::thread::sleep(d);
             Ok(())
