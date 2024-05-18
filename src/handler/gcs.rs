@@ -40,7 +40,13 @@ pub async fn upload(config: UserConfig, location: String)
 
     let client = create_gcs_client(config.clone()).await?;
 
-    let upload_type = UploadType::Simple(Media::new(relative_location.clone()));
+    let content_type = crate::helper::get_content_type(relative_location.clone());
+    let upload_type = UploadType::Simple(Media
+    {
+        name: relative_location.clone().into(),
+        content_type: content_type.into(),
+        content_length: None
+    });
     let content_bytes = match std::fs::read(location.clone()) {
         Ok(v) => v,
         Err(e) => {

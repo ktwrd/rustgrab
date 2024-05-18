@@ -20,11 +20,13 @@ pub fn upload(config: UserConfig, location: String)
             return Err(LError::ErrorCodeMsg(19, format!("{}", e)));
         }
     };
+
+    let content_type = crate::helper::get_content_type(filename_str.clone());
     
-    let content_part = match multipart::Part::bytes(content).file_name(filename_str).mime_str("image/png") {
+    let content_part = match multipart::Part::bytes(content).file_name(filename_str).mime_str(content_type.as_str()) {
         Ok(v) => v,
         Err(e) => {
-            eprintln!("Failed to set mime type to image/png");
+            eprintln!("Failed to set mime type to {}", content_type);
             eprintln!("{:#?}", e);
             return Err(LError::ErrorCodeMsg(44, format!("{}", e)));
         }
