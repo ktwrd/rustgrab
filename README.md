@@ -76,6 +76,12 @@ Once you've modified your config, you can now change your default target to `Goo
 When changes have been made to the locale files, run `generate_include.js` in the locale folder. This will generate `src/locale_content.rs`.
 
 # Changelog
+#### [0.7.7] - 2024-05-18
+- Update localization files
+- Fix <br> being shown in message boxes
+- Fix error messages not being displayed properly in message boxes
+- Move logic for including localization files to it's own file.
+
 #### [0.7.6] - 2024-05-17
 - Update README
 - Show message boxes as Alerts instead of Yes/No.

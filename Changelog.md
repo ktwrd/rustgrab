@@ -1,3 +1,9 @@
+#### [0.7.7] - 2024-05-18
+- Update localization files
+- Fix <br> being shown in message boxes
+- Fix error messages not being displayed properly in message boxes
+- Move logic for including localization files to it's own file.
+
 #### [0.7.6] - 2024-05-17
 - Update README
 - Show message boxes as Alerts instead of Yes/No.

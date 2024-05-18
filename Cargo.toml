@@ -1,6 +1,6 @@
 [package]
 name = "rustgrab"
-version = "0.7.6"
+version = "0.7.7"
 authors = ["Kate Ward <kate@dariox.club>"]
 description = "Screenshot Utility made in Rust"
 homepage = "https://github.com/ktwrd/rustgrab"
