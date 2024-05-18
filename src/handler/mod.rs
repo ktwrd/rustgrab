@@ -167,6 +167,14 @@ fn handle_error_fatal(target: ImageTarget, e: LError) {
             show_extended = false;
             locale::error_msg(*code, val.clone())
         },
+        LError::ErrorCode(code) => {
+            if do_ignore_code(*code) {
+                println!("[handler::handle_error_fatal] ignored code {}", code);
+                return;
+            }
+            show_extended = false;
+            locale::error(*code)
+        },
         _ => format!("{:#?}", e)
     };
     let mut msgbox_text = format!("Failed to handle target {:#?}\n\n{:#?}", target, content);
