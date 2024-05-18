@@ -33,7 +33,6 @@ pub enum LError {
     
     ErrorCode(usize),
     ErrorCodeMsg(usize, String),
-    ErrorCodeE(usize, Box<dyn std::error::Error>),
 
     UnhandledProcessExitStatus(std::process::ExitStatus),
     UnhandledProcessExitStatusS(ErrorSource, std::process::ExitStatus),
