@@ -145,13 +145,25 @@ fn inner_handle(target: ImageTarget, res: Result<TargetResultData, LError>, cfg:
         }
     }
 }
-
+const IGNORE_CODES: &'static [&'static usize] = &[&30];
+fn do_ignore_code(code: usize) -> bool {
+    for x in IGNORE_CODES.into_iter() {
+        if x == &&code {
+            return true;
+        }
+    }
+    return false;
+}
 /// Handle fatal errors for inner handling.
 /// Shows message box then panics.
 fn handle_error_fatal(target: ImageTarget, e: LError) {
     let mut show_extended = true;
     let content = match &e {
         LError::ErrorCodeMsg(code, val) => {
+            if do_ignore_code(*code) {
+                println!("[handler::handle_error_fatal] ignored code {}", code);
+                return;
+            }
             show_extended = false;
             locale::error_msg(*code, val.clone())
         },
