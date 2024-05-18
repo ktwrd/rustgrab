@@ -133,7 +133,7 @@ fn inner_handle(target: ImageTarget, res: Result<TargetResultData, LError>, cfg:
             match v {
                 TargetResultData::Upload(u) => match x.run(u) {
                     Err(e) => {
-                        handle_lerror_fatal(target, e);
+                        handle_error_fatal(target, e);
                     },
                     _ => {}
                 },
@@ -141,14 +141,14 @@ fn inner_handle(target: ImageTarget, res: Result<TargetResultData, LError>, cfg:
             };
         },
         Err(e) => {
-            handle_lerror_fatal(target, e);
+            handle_error_fatal(target, e);
         }
     }
 }
 
 /// Handle fatal errors for inner handling.
 /// Shows message box then panics.
-fn handle_lerror_fatal(target: ImageTarget, e: LError) {
+fn handle_error_fatal(target: ImageTarget, e: LError) {
     let mut show_extended = true;
     let content = match &e {
         LError::ErrorCodeMsg(code, val) => {
