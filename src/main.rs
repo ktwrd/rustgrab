@@ -1,8 +1,6 @@
 
 use clap::{
-    Command,
-    crate_version,
-    crate_authors};
+    crate_authors, crate_version, Arg, Command};
 
 use rustgrab::{
     locale::LocaleValues,
@@ -48,6 +46,17 @@ async fn main() {
                 .subcommand(Command::new("window").about(locale.window.clone()))
                 .subcommand(Command::new("full").about(locale.full.clone()))
         )
+        .subcommand(
+            Command::new("upload")
+                .version(crate_version!())
+                .author(crate_authors!())
+                .about(locale.action_upload.clone())
+                .arg(
+                    Arg::new("file")
+                    .help(locale.file.clone())
+                    .action(clap::ArgAction::Set)
+                )
+        )
         /*.subcommand(
             Command::new("toot")
                 .version(crate_version!())
@@ -81,17 +90,6 @@ async fn main() {
                 .subcommand(Command::new("full").about(locale.Full.clone())),
         )*/;
 
-    let mut target_file: Option<String> = None;
-    for a in cmd.clone().get_arguments().into_iter() {
-        let a_id_str = a.get_id().to_string();
-        if a_id_str == "file".to_string() {
-            if a.get_index() != None
-            {
-                println!("Using file at {}", a.to_string());
-                target_file = Some(a.to_string());
-            }
-        }
-    }
     match cmd.clone().get_matches().subcommand() {
         Some(("default", _)) => {
             handler::run_default_cfg().await;
@@ -103,9 +101,21 @@ async fn main() {
                 },
                 None => {
                     println!("No action provided");
+                    rustgrab::msgbox::error(52);
                 }
             }
-        }
+        },
+        Some(("upload", upload_matches)) => {
+            match upload_matches.get_one::<String>("file") {
+                Some(v) => {
+                    handler::run_default_upload_cfg(v.clone()).await;
+                },
+                None => {
+                    println!("No file provided");
+                    rustgrab::msgbox::error(51);
+                }
+            }
+        },
         _ => {
             println!("Nothing provided or sub-command is not supported!");
         },

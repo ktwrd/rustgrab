@@ -78,8 +78,8 @@ pub async fn run_screenshot(cfg: UserConfig, target: ImageTarget, kind: Screensh
 /// Generate & Parse Config, then call run_screenshot
 /// default_target will be used when target is None.
 pub async fn run_screenshot_cfg(target: Option<ImageTarget>, screenshot_kind: ScreenshotKind) {
-    let location = cfg_init_or_die();
-    println!("location: {}", location);
+    let cfg_location = cfg_init_or_die();
+    println!("config location: {}", cfg_location);
     match crate::config::UserConfig::parse() {
         Ok(cfg) => {
             let c = cfg.clone();
@@ -96,11 +96,32 @@ pub async fn run_screenshot_cfg(target: Option<ImageTarget>, screenshot_kind: Sc
     }
 }
 
+/// Generate & Parse Config, then call run_default_upload.
+pub async fn run_default_upload_cfg(location: String) {
+    let cfg_location = cfg_init_or_die();
+    println!("config location: {}", cfg_location);
+
+    match crate::config::UserConfig::parse() {
+        Ok(cfg) => {
+            run_default_upload(cfg, location).await;
+        },
+        Err(e) => {
+            crate::msgbox::error(46);
+            panic!("Failed to get config.\n{:#?}", e);
+        }
+    }
+}
+
 /// Upload file to default target
 pub async fn run_default_upload(cfg: UserConfig, location: String) {
-    let c = cfg.clone();
     let t = cfg.default_target.clone();
-    let h = match cfg.default_target {
+    run_upload(cfg, t, location).await;
+}
+
+/// Upload file to target specified.
+pub async fn run_upload(cfg: UserConfig, target: ImageTarget, location: String) {
+    let c = cfg.clone();
+    let h = match target {
         ImageTarget::Filesystem => {
             Err(LError::ErrorCodeMsg(49, format!("{:#?}", TargetAction::Upload)))
         },
@@ -116,10 +137,10 @@ pub async fn run_default_upload(cfg: UserConfig, location: String) {
 
         // handle stuff that we haven't, and let the user know.
         _ => {
-            Err(LError::ErrorCodeMsg(45, format!("{:#?}", t)))
+            Err(LError::ErrorCodeMsg(45, format!("{:#?}", target)))
         }
     };
-    inner_handle(t, h, c);
+    inner_handle(target, h, c);
 }
 
 /// Handle the result of a handle (i.e; crate::handler::imgur::run)
