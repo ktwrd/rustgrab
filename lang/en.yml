@@ -60,8 +60,8 @@ Error:
     29: Folder exists
     30: File not saved
     31: Unable to display system tray icon
-    32: Failed to unwrap base config location
-    33: Failed to unwrap final config location
+    32: Failed to pase config location
+    33: Failed to pase config location
     34: Failed to get fallback directory from %s
     35: Failed to read config location %s
     36: Config for %s has not been setup
