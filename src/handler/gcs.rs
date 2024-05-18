@@ -5,7 +5,9 @@ pub async fn screenshot(config: UserConfig, kind: ScreenshotKind)
     -> Result<TargetResultData, LError>
 {
     let target_location = config.generate_location()?.clone();
-    if crate::image_to_file(kind, target_location.clone()) == false {
+    let img_res = crate::image_to_file(kind, target_location.clone());
+    println!("[handler::gcs::screenshot] image_res: {}", img_res);
+    if img_res == false {
         return Err(LError::ErrorCode(30));
     }
     upload(config, target_location).await
