@@ -18,10 +18,11 @@ pub fn error_custom(text: String, title: String) {
     message_dialog(text, title, MessageType::Error);
 }
 pub fn message_dialog(text: String, title: String, msg_type: MessageType) {
+    let t = text.replace("\n", "\\n");
     if let Err(e) = MessageDialog::new()
         .set_type(msg_type)
         .set_title(title.as_str())
-        .set_text(text.as_str())
+        .set_text(t.as_str())
         .show_alert() {
         eprintln!("[msgbox.message_dialog] failed to show dialog: {:#?}", e);
         eprintln!("[msgbox.message_dialog] failed to show dialog\ntext: {}\ntitle: {}\ntype: {}",
