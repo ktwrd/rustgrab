@@ -73,6 +73,8 @@ Once you've modified your config, you can now change your default target to `Goo
 * Polski (Polish) by [@Michcioperz](https://twitter.com/Michcioperz)
 * Português (Portuguese) by [@pillgp](https://twitter.com/pillgp)
 
+When changes have been made to the locale files, run `generate_include.js` in the locale folder. This will generate `src/locale_content.rs`.
+
 # Changelog
 #### [0.7.6] - 2024-05-17
 - Update README
