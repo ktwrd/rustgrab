@@ -1,5 +1,6 @@
 pub mod handler;
 pub mod locale;
+pub mod locale_content;
 pub mod helper;
 pub mod config;
 pub mod clipboard;
