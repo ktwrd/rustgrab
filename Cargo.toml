@@ -36,6 +36,7 @@ tokio = { version = "1.37", features = ["macros", "rt-multi-thread"] }
 google-cloud-storage = "0.18.0"
 rand = "0.8.5"
 google-cloud-auth = "0.15.0"
+mime_guess = "2.0.4"
 
 [dependencies.reqwest]
 version = "0.12.4"

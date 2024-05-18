@@ -50,3 +50,11 @@ pub fn get_file_extension(location: String) -> String {
         .extension()
         .and_then(std::ffi::OsStr::to_str).unwrap_or("").to_string()
 }
+
+/// Get the content type of the file provided. Will default to "application/octet-stream"
+pub fn get_content_type(filename: String) -> String {
+    match mime_guess::from_path(filename).first() {
+        Some(v) => v.to_string(),
+        None => String::from("application/octet-stream")
+    }
+}
