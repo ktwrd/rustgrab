@@ -14,7 +14,8 @@ pub struct LocaleValues {
     pub twitter_auth: String,
     pub mastodon_auth: String,
     pub default_action: String,
-    pub action_screenshot: String
+    pub action_screenshot: String,
+    pub action_upload: String
 }
 fn try_get_yaml(data: &Yaml, failover: &str) -> String {
     data.as_str().unwrap_or(failover).to_string()
@@ -35,7 +36,8 @@ impl LocaleValues {
             twitter_auth: String::new(),
             mastodon_auth: String::new(),
             default_action: String::new(),
-            action_screenshot: String::new()
+            action_screenshot: String::new(),
+            action_upload: String::new()
         }
     }
     pub fn generate(&mut self) -> &mut Self
@@ -55,6 +57,7 @@ impl LocaleValues {
         self.mastodon_auth = locator["Mastodon"]["Auth"].as_str().unwrap_or("<mastodon_auth>").to_string();
         self.default_action = locator["DefaultAction"].as_str().unwrap_or("<default action from config>").to_string();
         self.action_screenshot = try_get_yaml(&locator["Action"]["Screenshot"], "<screenshot action>");
+        self.action_upload = try_get_yaml(&locator["Action"]["Upload"], "<upload action>");
         self
     }
 }
@@ -93,7 +96,7 @@ pub fn error(code: usize) -> String {
     let (error_txt, msg_txt) = (r.error, r.code);
 
     match code {
-        1..=50 => return format!("{} {}: {}", error_txt, code, msg_txt),
+        1..=52 => return format!("{} {}: {}", error_txt, code, msg_txt),
         _ => unreachable!("Internal Logic Error"),
     };
 }

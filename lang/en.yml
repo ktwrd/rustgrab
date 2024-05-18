@@ -79,6 +79,8 @@ Error:
     48: Invalid default screenshot action %s
     49: Unsupported action %s for target
     50: Auth Config for Google Cloud Storage not provided.
+    51: No file provided.
+    52: No screenshot action provided.
 Help:
     Usage: Usage
     Options: Options
@@ -106,3 +108,4 @@ Help:
     Action:
         Default: Default Action. Will use default_action from config file.
         Screenshot: Takes a screenshot.
+        Upload: Upload file to specified location.
