@@ -1,11 +1,15 @@
 use crate::config::UserConfig;
 
 pub async fn open() {
-    todo!("open config file");
+    let location = UserConfig::get_config_location();
+    let location_path = std::path::Path::new(location.as_str());
+    edit::edit_file(location_path).expect("Failed to open config file!");
 }
 pub async fn init() {
     todo!("init wizard for config file");
 }
 pub async fn display_location() -> ! {
-    todo!("reveal config file location in default file manager");
+    let location = UserConfig::get_config_location();
+    println!("{}", location);
+    std::process::exit(0)
 }
