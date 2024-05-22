@@ -15,7 +15,11 @@ pub struct LocaleValues {
     pub mastodon_auth: String,
     pub default_action: String,
     pub action_screenshot: String,
-    pub action_upload: String
+    pub action_upload: String,
+    pub action_config: String,
+    pub action_config_init: String,
+    pub action_config_location: String,
+    pub action_config_open: String
 }
 fn try_get_yaml(data: &Yaml, failover: &str) -> String {
     data.as_str().unwrap_or(failover).to_string()
@@ -37,7 +41,11 @@ impl LocaleValues {
             mastodon_auth: String::new(),
             default_action: String::new(),
             action_screenshot: String::new(),
-            action_upload: String::new()
+            action_upload: String::new(),
+            action_config: String::new(),
+            action_config_init: String::new(),
+            action_config_location: String::new(),
+            action_config_open: String::new()
         }
     }
     pub fn generate(&mut self) -> &mut Self
@@ -58,6 +66,10 @@ impl LocaleValues {
         self.default_action = locator["DefaultAction"].as_str().unwrap_or("<default action from config>").to_string();
         self.action_screenshot = try_get_yaml(&locator["Action"]["Screenshot"], "<screenshot action>");
         self.action_upload = try_get_yaml(&locator["Action"]["Upload"], "<upload action>");
+        self.action_config = try_get_yaml(&locator["Action"]["Config"]["Action"], "<config action>");
+        self.action_config_init = try_get_yaml(&locator["Action"]["Config"]["Init"], "<config init action>");
+        self.action_config_location = try_get_yaml(&locator["Action"]["Config"]["Location"], "<config location action>");
+        self.action_config_open = try_get_yaml(&locator["Action"]["Config"]["Open"], "<open config>");
         self
     }
 }

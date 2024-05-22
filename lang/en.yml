@@ -109,3 +109,8 @@ Help:
         Default: Default Action. Will use default_action from config file.
         Screenshot: Takes a screenshot.
         Upload: Upload file to specified location.
+        Config:
+            Action: Configure options for rustgrab
+            Init: Initialize configuration for rustgrab. Will override your current config!!
+            Location: Display the current location for your config file.
+            Open: Open your config file in your default JSON editor.
