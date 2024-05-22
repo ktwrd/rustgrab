@@ -132,7 +132,7 @@ async fn main() {
             match config_matches.subcommand_name() {
                 Some("init") => rustgrab::action::config::init().await,
                 Some("open") => rustgrab::action::config::open().await,
-                Some("location") => rustgrab::action::config::reveal_location().await,
+                Some("location") => rustgrab::action::config::display_location().await,
                 _ => println!("Unknown subcommand")
             }
         },
