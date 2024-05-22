@@ -107,26 +107,10 @@ async fn main() {
             handler::run_default_cfg().await;
         },
         Some(("screenshot", screenshot_matches)) => {
-            match handler::arg_to_kind(screenshot_matches) {
-                Some(v) => {
-                    handler::run_screenshot_cfg(None, v).await;
-                },
-                None => {
-                    println!("No action provided");
-                    rustgrab::msgbox::error(52);
-                }
-            }
+            rustgrab::action::screenshot::run(screenshot_matches).await;
         },
         Some(("upload", upload_matches)) => {
-            match upload_matches.get_one::<String>("file") {
-                Some(v) => {
-                    handler::run_default_upload_cfg(v.clone()).await;
-                },
-                None => {
-                    println!("No file provided");
-                    rustgrab::msgbox::error(51);
-                }
-            }
+            rustgrab::action::upload::run(upload_matches).await;
         },
         Some(("config", config_matches)) => {
             match config_matches.subcommand_name() {
