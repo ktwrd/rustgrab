@@ -57,6 +57,18 @@ async fn main() {
                     .action(clap::ArgAction::Set)
                 )
         )
+        .subcommand(
+            Command::new("config")
+                .version(crate_version!())
+                .author(crate_authors!())
+                .about(locale.action_config.clone())
+                .subcommand(Command::new("init")
+                    .about(locale.action_config_init.clone()))
+                .subcommand(Command::new("open")
+                    .about(locale.action_config_open.clone()))
+                .subcommand(Command::new("location")
+                    .about(locale.action_config_location.clone()))
+        )
         /*.subcommand(
             Command::new("toot")
                 .version(crate_version!())
@@ -114,6 +126,14 @@ async fn main() {
                     println!("No file provided");
                     rustgrab::msgbox::error(51);
                 }
+            }
+        },
+        Some(("config", config_matches)) => {
+            match config_matches.subcommand_name() {
+                Some("init") => rustgrab::action::config::init().await,
+                Some("open") => rustgrab::action::config::open().await,
+                Some("location") => rustgrab::action::config::reveal_location().await,
+                _ => println!("Unknown subcommand")
             }
         },
         _ => {

@@ -6,6 +6,7 @@ pub mod config;
 pub mod clipboard;
 pub mod notification;
 pub mod msgbox;
+pub mod action;
 
 use config::PostUploadAction;
 use serde::{Serialize, Deserialize};
