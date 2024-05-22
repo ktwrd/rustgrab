@@ -15,3 +15,4 @@ Cargo.lock
 .fleet/settings.json
 
 src/handler/imgur_client_id.txt
+.idea
