@@ -1,5 +1,8 @@
 use crate::{config::UserConfig, LError};
 use crate::handler::{TargetResultData, TargetResultUploadData};
+use futures::StreamExt;
+use indicatif::ProgressBar;
+use tokio_util::io::ReaderStream;
 
 pub async fn screenshot(config: UserConfig, kind: ScreenshotKind)
     -> Result<TargetResultData, LError>
@@ -47,16 +50,46 @@ pub async fn upload(config: UserConfig, location: String)
         content_type: content_type.into(),
         content_length: None
     });
-    let content_bytes = match std::fs::read(location.clone()) {
+
+    let file = match tokio::fs::File::open(location.clone()).await {
         Ok(v) => v,
         Err(e) => {
-            return Err(LError::ErrorCodeMsg(19, format!("{}", e)));
+            return Err(LError::ErrorCodeMsg(19, format!("{:#?}", e)));
         }
     };
-    let data = client.upload_object(&UploadObjectRequest {
+    let total_size = match file.metadata().await {
+        Ok(v) => v.len(),
+        Err(e) => {
+            return Err(LError::ErrorCodeMsg(19, format!("{:#?}", e)));
+        }
+    };
+    let mut reader_stream = ReaderStream::new(file);
+    let mut uploaded = 0 as u64;
+
+    let pb = ProgressBar::new(total_size);
+    pb.set_style(indicatif::ProgressStyle::with_template("{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {bytes}/{total_bytes} ({eta})")
+        .unwrap()
+        .with_key("eta", |state: &indicatif::ProgressState, w: &mut dyn std::fmt::Write| write!(w, "{:.1}s", state.eta().as_secs_f64()).unwrap())
+        .progress_chars("#>-"));
+
+    let async_stream = async_stream::stream! {
+        while let Some(chunk) = reader_stream.next().await {
+            if let Ok(chunk) = &chunk {
+                let new = std::cmp::min(uploaded + (chunk.len() as u64), total_size);
+                uploaded = new;
+                pb.set_position(new);
+                if uploaded >= total_size {
+                    pb.finish_with_message("done!");
+                }
+            }
+            yield chunk;
+        }
+    };
+
+    let data = client.upload_streamed_object(&UploadObjectRequest {
         bucket: gcs_cfg.bucket.clone(),
         ..Default::default()
-    }, content_bytes, &upload_type).await;
+    }, async_stream, &upload_type).await;
 
     match data {
         Ok(_) => {

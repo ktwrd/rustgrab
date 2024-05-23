@@ -38,6 +38,9 @@ rand = "0.8.5"
 google-cloud-auth = "0.15.0"
 mime_guess = "2.0.4"
 edit = "0.1.5"
+async-stream = "0.3.5"
+tokio-util = { version= "0.7.11", features = ["io"] }
+indicatif = "0.17.8"
 
 [dependencies.reqwest]
 version = "0.12.4"
