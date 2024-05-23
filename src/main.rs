@@ -71,6 +71,7 @@ async fn main() {
         )
         .subcommand(
             Command::new("devtest")
+            	.about(String::from("Commands that are used for testing broken/buggy features that are in-development."))
                 .subcommand(Command::new("progress_dialog"))
         )
         /*.subcommand(
