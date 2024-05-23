@@ -69,6 +69,10 @@ async fn main() {
                 .subcommand(Command::new("location")
                     .about(locale.action_config_location.clone()))
         )
+        .subcommand(
+            Command::new("devtest")
+                .subcommand(Command::new("progress_dialog"))
+        )
         /*.subcommand(
             Command::new("toot")
                 .version(crate_version!())
@@ -120,6 +124,12 @@ async fn main() {
                 _ => println!("Unknown subcommand")
             }
         },
+        Some(("devtest", dt_matches)) => {
+            match dt_matches.subcommand_name() {
+                Some("progress_dialog") => rustgrab::handler::progress_dialog::test().await,
+                _ => panic!("no sub-command or invalid subcommand")
+            }
+        }
         _ => {
             println!("Nothing provided or sub-command is not supported!");
         },
