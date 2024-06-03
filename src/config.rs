@@ -1,10 +1,14 @@
+use std::fmt;
 use screenshot_rs::ScreenshotKind;
 use serde::{Deserialize, Serialize};
-use crate::locale;
-use crate::LError as LError;
-use crate::helper;
+use crate::{
+    locale,
+    helper,
+    LError};
 use rand::{distributions::Alphanumeric, Rng};
 
+use strum_macros::EnumIter;
+use strum::IntoEnumIterator;
 pub const DEFAULT_SCREENSHOT_ACTION: &str = "area";
 pub const FILENAME_FORMAT_DEFAULT: &str = "%Y%m%d_%H-%H-%M.png";
 pub const LOCATION_ROOT_DEFAULT: &str = "home.pictures";
@@ -15,7 +19,12 @@ pub enum UserConfigKeyword {
     BasePath,
     FinalPath
 }
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+
+
+/* ================================
+ * ImageTarget
+ */
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumIter, PartialEq)]
 pub enum ImageTarget {
     /// src/handler/filesystem.rs
     Filesystem,
@@ -34,13 +43,29 @@ pub enum ImageTarget {
     /// src/handler/xbackbone.rs
     XBackbone
 }
+impl fmt::Display for ImageTarget {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            ImageTarget::Filesystem => write!(f, "Filesystem"),
+            ImageTarget::Twitter => write!(f, "Twitter"),
+            ImageTarget::Mastodon => write!(f, "Mastodon"),
+            ImageTarget::Imgur => write!(f, "Imgur"),
+            ImageTarget::GoogleCloudStorage => write!(f, "Google Cloud Storage"),
+            ImageTarget::AWS => write!(f, "AWS S3"),
+            ImageTarget::XBackbone => write!(f, "XBackbone")
+        }
+    }
+}
 impl Default for ImageTarget {
     fn default() -> Self {
         ImageTarget::Filesystem
     }
 }
+/* ================================
+ * PostTargetAction
+ */
 /// Action that happens after the Image target is successful.
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumIter, PartialEq)]
 pub enum PostTargetAction {
     CopyLocation,
     CopyContent,
@@ -51,9 +76,21 @@ impl Default for PostTargetAction {
         PostTargetAction::CopyLocation
     }
 }
+impl fmt::Display for PostTargetAction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            PostTargetAction::CopyLocation => write!(f, "Copy Location/URL"),
+            PostTargetAction::CopyContent => write!(f, "Copy Content"),
+            PostTargetAction::ShortenLocation => write!(f, "Shorten then Copy URL")
+        }
+    }
+}
+/* ================================
+ * PostUploadAction
+ */
 /// Action that is ran after the file has been uploaded.
 /// This will be ignored when ImageTarget::FileSystem target is used.
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumIter, PartialEq)]
 pub enum PostUploadAction {
     CopyLink,
     ShortenLink
@@ -63,8 +100,19 @@ impl Default for PostUploadAction {
         PostUploadAction::CopyLink
     }
 }
+impl fmt::Display for PostUploadAction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            PostUploadAction::CopyLink => write!(f, "Copy URL"),
+            PostUploadAction::ShortenLink => write!(f, "Shorten URL"),
+        }
+    }
+}
+/* ================================
+ * TargetAction
+ */
 /// What action should be taken.
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumIter, PartialEq)]
 pub enum TargetAction {
     Screenshot,
     Upload
@@ -72,6 +120,11 @@ pub enum TargetAction {
 impl Default for TargetAction {
     fn default() -> Self {
         TargetAction::Screenshot
+    }
+}
+impl fmt::Display for TargetAction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:#?}", self)
     }
 }
 /// Try and parse UserConfig.default_screenshot_type
