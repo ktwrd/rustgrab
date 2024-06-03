@@ -9,7 +9,7 @@ macro_rules! impl_choice_populate {
         impl GUIChoice for $t {
             fn populate_choice(control: &mut fltk::menu::Choice) {
                 for x in $t::iter() {
-                    control.add_choice(&format!("{}", x));
+                    control.add_choice(&format!("{:}", x));
                 }
             }
             fn from_choice(control: &mut fltk::menu::Choice) -> $t {
