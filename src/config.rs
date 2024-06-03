@@ -37,7 +37,7 @@ pub enum ImageTarget {
     /// todo: not tested. src/handler/imgur.rs
     Imgur,
 
-    /// todo
+    /// src/handler/gcs.rs
     GoogleCloudStorage,
     /// todo
     AWS,
