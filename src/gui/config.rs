@@ -32,6 +32,14 @@ pub fn run() {
 fn init() {
     let app = app::App::default();
     let (send_action, receive_action) = app::channel::<Status>();
+    let cfg_data = match std::path::Path::new(&UserConfig::get_config_location()).exists() {
+        true => UserConfig::parse().expect("Failed to read config"),
+        false => UserConfig::new()
+    };
+    if let Ok(mut c) = CURRENT_CONFIG.write() {
+        *c = cfg_data;
+    }
+
     if let Ok(mut ui) = CURRENT_UI.write() {
         ui.win.show();
         ui.tabs.emit(send_action, Status::Update);
