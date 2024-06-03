@@ -127,7 +127,6 @@ async fn main() {
         },
         Some(("devtest", dt_matches)) => {
             match dt_matches.subcommand_name() {
-                Some("progress_dialog") => rustgrab::handler::progress_dialog::test().await,
                 _ => panic!("no sub-command or invalid subcommand")
             }
         }

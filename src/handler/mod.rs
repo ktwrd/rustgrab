@@ -11,7 +11,6 @@ pub mod filesystem;
 pub mod xbackbone;
 pub mod post_upload_action;
 pub mod gcs;
-pub mod progress_dialog;
 
 /// Generate & Parse Config, Then call `run_default`
 pub async fn run_default_cfg() {
