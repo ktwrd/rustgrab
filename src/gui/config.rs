@@ -109,7 +109,7 @@ fn tab_defaults_reset() {
         if let Ok(cfg) = CURRENT_CONFIG.read() {
             TargetAction::populate_choice(&mut ui.choice_default_action);
             LScreenshotType::populate_choice(&mut ui.choice_default_screenshot_type);
-            TargetAction::populate_choice(&mut ui.choice_default_target);
+            ImageTarget::populate_choice(&mut ui.choice_default_target);
 
             PostTargetAction::populate_choice(&mut ui.choice_default_post_target_action);
             PostUploadAction::populate_choice(&mut ui.choice_default_post_upload_action);
