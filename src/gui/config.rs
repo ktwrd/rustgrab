@@ -114,6 +114,10 @@ fn tab_defaults_reset() {
             PostTargetAction::populate_choice(&mut ui.choice_default_post_target_action);
             PostUploadAction::populate_choice(&mut ui.choice_default_post_upload_action);
 
+            cfg.default_action.select_choice(&mut ui.choice_default_action);
+            cfg.default_screenshot_type.select_choice(&mut ui.choice_default_screenshot_type);
+            cfg.default_target.select_choice(&mut ui.choice_default_target);
+
             cfg.post_target_action.select_choice(&mut ui.choice_default_post_target_action);
             cfg.post_upload_action.select_choice(&mut ui.choice_default_post_upload_action);
         }
