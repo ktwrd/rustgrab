@@ -2,11 +2,12 @@ use std::fmt;
 use screenshot_rs::ScreenshotKind;
 use serde::{Deserialize, Serialize};
 use crate::{
+    impl_choice_populate,
     locale,
     helper,
+    GUIChoice,
     LError};
 use rand::{distributions::Alphanumeric, Rng};
-
 use strum_macros::EnumIter;
 use strum::IntoEnumIterator;
 pub const DEFAULT_SCREENSHOT_ACTION: &str = "area";
@@ -61,6 +62,9 @@ impl Default for ImageTarget {
         ImageTarget::Filesystem
     }
 }
+impl_choice_populate!(ImageTarget);
+
+
 /* ================================
  * PostTargetAction
  */
@@ -85,6 +89,9 @@ impl fmt::Display for PostTargetAction {
         }
     }
 }
+impl_choice_populate!(PostTargetAction);
+
+
 /* ================================
  * PostUploadAction
  */
@@ -108,6 +115,8 @@ impl fmt::Display for PostUploadAction {
         }
     }
 }
+impl_choice_populate!(PostUploadAction);
+
 /* ================================
  * TargetAction
  */
@@ -127,6 +136,11 @@ impl fmt::Display for TargetAction {
         write!(f, "{:#?}", self)
     }
 }
+impl_choice_populate!(TargetAction);
+
+
+
+
 #[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumIter, PartialEq)]
 pub enum LScreenshotType {
     Area,
@@ -161,6 +175,9 @@ impl LScreenshotType {
         }
     }
 }
+impl_choice_populate!(LScreenshotType);
+
+
 /// Try and parse UserConfig.default_screenshot_type
 pub fn parse_screenshot_action(action: String) -> Result<ScreenshotKind, LError>
 {
