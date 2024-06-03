@@ -179,3 +179,14 @@ pub struct GCSConfig {
     pub relative_path: String,
     pub public_url_base: Option<String>
 }
+impl Default for GCSConfig {
+    fn default() -> Self {
+        Self {
+            use_default: true,
+            auth_cfg_location: None,
+            bucket: String::new(),
+            relative_path: String::from("upload/$rand"),
+            public_url_base: None
+        }
+    }
+}
