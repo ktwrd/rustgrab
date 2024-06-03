@@ -42,6 +42,8 @@ async-stream = "0.3.5"
 tokio-util = { version= "0.7.11", features = ["io"] }
 indicatif = "0.17.8"
 
+fltk = "1.4.30"
+lazy_static = "1.4.0"
 strum = "0.26.2"
 strum_macros = "0.26.3"
 
@@ -61,3 +63,6 @@ features = [
     "fast-rng",          # Use a faster (but still sufficiently random) RNG
     "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
 ]
+
+[build-dependencies]
+fl2rust = "0.5.19"
