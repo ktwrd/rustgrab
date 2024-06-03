@@ -127,6 +127,40 @@ impl fmt::Display for TargetAction {
         write!(f, "{:#?}", self)
     }
 }
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumIter, PartialEq)]
+pub enum LScreenshotType {
+    Area,
+    Window,
+    Full
+}
+impl From<ScreenshotKind> for LScreenshotType {
+    fn from(kind: ScreenshotKind) -> Self {
+        match kind {
+            ScreenshotKind::Area => Self::Area,
+            ScreenshotKind::Window => Self::Window,
+            ScreenshotKind::Full => Self::Full
+        }
+    }
+}
+impl Default for LScreenshotType {
+    fn default() -> Self {
+        Self::Area
+    }
+}
+impl fmt::Display for LScreenshotType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:#?}", self)
+    }
+}
+impl LScreenshotType {
+    pub fn to(&self) -> ScreenshotKind {
+        match self {
+            Self::Area => ScreenshotKind::Area,
+            Self::Window => ScreenshotKind::Window,
+            Self::Full => ScreenshotKind::Full
+        }
+    }
+}
 /// Try and parse UserConfig.default_screenshot_type
 pub fn parse_screenshot_action(action: String) -> Result<ScreenshotKind, LError>
 {
@@ -158,8 +192,8 @@ pub struct UserConfig {
     #[serde(default)]
     pub default_action: TargetAction,
     /// Default action that is used when no screenshot kind is provided via the CLI.
-    #[serde(default = "get_default_screenshot_type")]
-    pub default_screenshot_type: String,
+    #[serde(default)]
+    pub default_screenshot_type: LScreenshotType,
 
     /// Default image/upload target when taking a screenshot or uploading a file.
     #[serde(default)]
@@ -182,7 +216,6 @@ pub struct UserConfig {
     pub imgur_config: Option<crate::handler::imgur::ImgurConfig>,
     pub gcs_config: Option<crate::handler::gcs::GCSConfig>
 }
-fn get_default_screenshot_type() -> String { kind_to_string(ScreenshotKind::Area) }
 fn get_default_filename_format() -> String { FILENAME_FORMAT_DEFAULT.to_string() }
 fn get_default_location_format() -> String { LOCATION_FORMAT_DEFAULT.to_string() }
 fn get_default_location_root() -> String { LOCATION_ROOT_DEFAULT.to_string() }
@@ -191,7 +224,7 @@ impl UserConfig {
     pub fn new() -> Self {
         Self {
             default_action: TargetAction::default(),
-            default_screenshot_type: get_default_screenshot_type(),
+            default_screenshot_type: LScreenshotType::default(),
             default_target: ImageTarget::default(),
             post_target_action: PostTargetAction::default(),
             post_upload_action: PostUploadAction::default(),

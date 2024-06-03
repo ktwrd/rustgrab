@@ -39,14 +39,7 @@ pub async fn run_default(cfg: UserConfig) {
 }
 /// Take a screenshot with the default kind & target defined in the config file.
 pub async fn run_default_screenshot(cfg: UserConfig) {
-    let screenshot_type = match crate::config::parse_screenshot_action(cfg.default_screenshot_type.clone()) {
-        Ok(v) => v,
-        Err(_) => {
-            crate::msgbox::error_msg(48, cfg.default_screenshot_type);
-            std::process::exit(1);
-        }
-    };
-    run_screenshot(cfg.clone(), cfg.default_target, screenshot_type).await
+    run_screenshot(cfg.clone(), cfg.default_target, cfg.default_screenshot_type.to()).await
 }
 
 /// Take a screenshot while providing the Target and kind.
