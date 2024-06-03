@@ -72,7 +72,7 @@ async fn main() {
         .subcommand(
             Command::new("devtest")
             	.about(String::from("Commands that are used for testing broken/buggy features that are in-development."))
-                .subcommand(Command::new("progress_dialog"))
+                .subcommand(Command::new("cfg_gui"))
         )
         /*.subcommand(
             Command::new("toot")
@@ -127,6 +127,7 @@ async fn main() {
         },
         Some(("devtest", dt_matches)) => {
             match dt_matches.subcommand_name() {
+                Some("cfg_gui") => rustgrab::gui::config::run(),
                 _ => panic!("no sub-command or invalid subcommand")
             }
         }
