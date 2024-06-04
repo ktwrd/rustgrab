@@ -18,6 +18,7 @@ enum Status {
     Update,
     Quit,
 }
+/// Run ConfigUserInterface. Can only be called once, otherwise will panic.
 pub fn run() {
     unsafe {
         if CALLED_ALREADY {
@@ -28,7 +29,8 @@ pub fn run() {
 
     init();
 }
-
+/// Window icon for ConfigUserInterface as PNG.
+pub const WINDOW_ICON: &[u8] = include_bytes!("config_ui.png");
 fn init() {
     let app = app::App::default();
     let (send_action, receive_action) = app::channel::<Status>();
@@ -42,6 +44,14 @@ fn init() {
 
     if let Ok(mut ui) = CURRENT_UI.write() {
         ui.win.show();
+        match image::PngImage::from_data(WINDOW_ICON) {
+            Ok(img) => {
+                ui.win.set_icon(Some(img));
+            },
+            Err(e) => {
+                eprintln!("[gui::config::init] failed to set window icon {:#?}", e);
+            }
+        };
         ui.tabs.emit(send_action, Status::Update);
         ui.btn_save.set_callback(move |_| {
             btn_save_click();
