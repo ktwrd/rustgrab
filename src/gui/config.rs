@@ -46,7 +46,17 @@ fn init() {
     }
 
     if let Ok(mut ui) = CURRENT_UI.write() {
+        ui.win.make_resizable(false);
         ui.win.show();
+        ui.win.handle(move |w, ev| match ev {
+            enums::Event::Resize => {
+                if w.width() > 640 || w.height() > 260 {
+                    w.set_size(640, 260);
+                }
+                true
+            },
+            _ => false
+        });
         match image::PngImage::from_data(WINDOW_ICON) {
             Ok(img) => {
                 ui.win.set_icon(Some(img));
