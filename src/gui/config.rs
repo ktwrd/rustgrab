@@ -33,6 +33,9 @@ pub fn run() {
 pub const WINDOW_ICON: &[u8] = include_bytes!("config_ui.png");
 fn init() {
     let app = app::App::default();
+    let (ct, wt) = crate::gui::get_theme();
+    ct.apply();
+    wt.apply();
     let (send_action, receive_action) = app::channel::<Status>();
     let cfg_data = match std::path::Path::new(&UserConfig::get_config_location()).exists() {
         true => UserConfig::parse().expect("Failed to read config"),
