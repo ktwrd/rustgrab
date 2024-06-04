@@ -1,4 +1,3 @@
- 
 # data file for the Fltk User Interface Designer (fluid)
 version 1.0308
 header_name {.h}
@@ -9,77 +8,77 @@ class ConfigUserInterface {open
   } {
     Fl_Window win {
       label {rustgrab - Config} open
-      xywh {2845 538 520 230} type Double color 50 non_modal visible
+      xywh {3033 745 640 260} type Double color 50 non_modal visible
     } {
-      Fl_Tabs tabs {open
-        xywh {0 0 520 200} box FLAT_BOX color 40 labeltype NO_LABEL
+      Fl_Tabs tabs {
+        xywh {0 0 640 230} box FLAT_BOX color 40 labeltype NO_LABEL
       } {
         Fl_Scroll page_general {
           label General open
-          xywh {0 30 520 170} box FLAT_BOX selection_color 40
+          xywh {0 30 640 200} box FLAT_BOX selection_color 40 hide
         } {
           Fl_Input input_filename_format {
             label {Filename Format}
-            xywh {135 45 200 28} when 1
+            xywh {135 45 400 28} when 1
           }
           Fl_Input input_location_format {
             label {Location Format}
-            xywh {135 75 200 28} when 1
+            xywh {135 75 400 28} when 1
           }
           Fl_Input input_root_directory {
             label {Root Directory}
-            xywh {135 105 200 28} when 1
+            xywh {135 105 400 28} when 1
           }
           Fl_Button btn_root_directory {
-            label Select selected
-            xywh {340 107 70 24}
+            label Select
+            xywh {540 107 70 24}
           }
         }
         Fl_Scroll page_defaults {
           label Defaults open
-          xywh {0 30 520 170} box FLAT_BOX selection_color 40 hide
+          xywh {0 30 640 200} box FLAT_BOX selection_color 40
         } {
           Fl_Choice choice_default_action {
             label Action open
-            xywh {135 45 100 20} down_box BORDER_BOX when 1
+            xywh {135 45 200 24} down_box BORDER_BOX when 1
           } {}
           Fl_Choice choice_default_screenshot_type {
             label {Screenshot Type} open
-            xywh {135 75 100 20} down_box BORDER_BOX when 1
+            xywh {135 75 200 24} down_box BORDER_BOX when 1
           } {}
           Fl_Choice choice_default_target {
             label Target open
-            xywh {135 105 100 20} down_box BORDER_BOX when 1
+            xywh {135 105 200 24} down_box BORDER_BOX when 1
           } {}
           Fl_Choice choice_default_post_target_action {
             label {Post-Target Action} open
-            xywh {405 45 100 20} down_box BORDER_BOX when 1
+            xywh {475 45 160 24} down_box BORDER_BOX when 1
           } {}
           Fl_Choice choice_default_post_upload_action {
             label {Post-Upload Action} open
-            xywh {405 75 100 20} down_box BORDER_BOX when 1
+            xywh {475 75 160 24} down_box BORDER_BOX when 1
           } {}
         }
         Fl_Scroll page_xbackbone {
           label XBackbone open
-          xywh {0 30 520 170} box FLAT_BOX selection_color 40 hide
+          xywh {0 30 640 200} box FLAT_BOX selection_color 40 hide
         } {
           Fl_Input input_xbackbone_url {
             label URL
-            xywh {135 45 200 28} when 1
+            xywh {135 45 400 28} when 1
           }
           Fl_Input input_xbackbone_token {
             label Token
-            xywh {135 75 200 28} when 1
+            xywh {135 75 400 28} when 1
           }
           Fl_Button btn_xbackbone_verify {
             label Verify
-            xywh {135 105 70 24}
+            xywh {135 106 70 24}
           }
         }
         Fl_Scroll page_gcs {
           label {Google Cloud Storage} open
-          xywh {0 30 520 170} box FLAT_BOX selection_color 40 hide
+          xywh {0 30 640 200} box FLAT_BOX selection_color 40 hide
         } {
           Fl_Check_Button cb_gcs_use_default_auth {
             label {Use Default Auth}
@@ -87,40 +86,40 @@ class ConfigUserInterface {open
           }
           Fl_Input input_gcs_auth_cfg_location {
             label {Auth Config Location}
-            xywh {165 75 200 28} when 1
+            xywh {165 75 400 28} when 1
           }
           Fl_Button btn_gcs_auth_cfg_location {
             label Select
-            xywh {370 77 70 24}
+            xywh {570 77 70 24}
           }
           Fl_Input input_gcs_bucket {
             label Bucket
-            xywh {165 105 200 28} when 1
+            xywh {165 105 400 28} when 1
           }
           Fl_Input input_gcs_relative_path {
             label {Relative Path}
-            xywh {165 135 200 28} when 1
+            xywh {165 135 400 28} when 1
           }
           Fl_Input input_gcs_public_url_base {
             label {Public URL Base}
-            xywh {165 165 200 28} when 1
+            xywh {165 165 300 28} when 1
           }
           Fl_Check_Button cb_gcs_public_url_base {
             label {Use Default}
-            xywh {365 167 100 24} down_box DOWN_BOX when 1
+            xywh {465 167 100 24} down_box DOWN_BOX when 1
           }
         }
       }
-      Fl_Group {} {open
-        xywh {0 200 520 30} box THIN_UP_BOX
+      Fl_Group {} {open selected
+        xywh {0 230 640 30}
       } {
         Fl_Button btn_save {
           label Save
-          xywh {10 205 70 20}
+          xywh {10 235 70 20}
         }
         Fl_Button btn_cancel {
           label Cancel
-          xywh {85 205 70 20}
+          xywh {85 235 70 20}
         }
       }
     }
