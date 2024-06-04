@@ -1,3 +1,5 @@
+use fltk_theme::{color_themes, ColorTheme, ThemeType, WidgetTheme};
+
 
 pub mod config;
 pub(crate) mod config_ui;
@@ -129,5 +131,24 @@ macro_rules! fltk_choice_set_lazystatic_option {
             }
             $resetfunc();
         })
+    }
+}
+
+/// When true, a dark-mode theme will be used for UIs.
+/// TODO detect if using darkmode or specify via config.
+pub static mut DARK_MODE: bool = true;
+
+pub fn get_theme() -> (ColorTheme, WidgetTheme) {
+    unsafe {
+        match crate::gui::DARK_MODE {
+            true => (
+                ColorTheme::new(color_themes::DARK_THEME),
+                WidgetTheme::new(ThemeType::Dark)
+            ),
+            false => (
+                ColorTheme::new(color_themes::GRAY_THEME),
+                WidgetTheme::new(ThemeType::Greybird)
+            )
+        }
     }
 }
