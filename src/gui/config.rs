@@ -1,6 +1,7 @@
 use std::sync::RwLock;
 use fltk::{prelude::*, *};
 use lazy_static::lazy_static;
+use native_dialog::MessageType;
 use crate::config::{ImageTarget, LScreenshotType, PostTargetAction, PostUploadAction, TargetAction, UserConfig};
 use crate::{fltk_choice_set_lazystatic, fltk_set_lazystatic, fltk_set_lazystatic_option, fltk_set_lazystatic_option_withvalue, GUIChoice};
 use crate::gui::config_ui::ConfigUserInterface;
@@ -91,7 +92,15 @@ fn init() {
 }
 
 fn btn_save_click() {
-    panic!("[btn_save_click] not implemented");
+    if let Ok(cfg) = CURRENT_CONFIG.read() {
+        if let Err(e) = cfg.write() {
+            eprintln!("[gui::config::btn_save_click] Failed to write {:#?}", e);
+            crate::msgbox::error_custom(String::from("rustgrab - Config"), format!("Failed to save config\n\n{:#?}", e));
+            std::process::exit(1);
+        }
+    }
+    crate::msgbox::message_dialog(format!("Config saved successfully"), format!("rustgrab - Config"), MessageType::Info);
+    std::process::exit(0);
 }
 
 fn tab_general_init() {
