@@ -97,6 +97,14 @@ pub struct XBackboneConfig {
     pub token: String,
     pub url: String
 }
+impl Default for XBackboneConfig {
+    fn default() -> Self {
+        Self {
+            token: String::new(),
+            url: String::new()
+        }
+    }
+}
 
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 pub struct XBackboneResponse {

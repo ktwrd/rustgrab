@@ -19,10 +19,10 @@ Screenshot Utility made in Rust for ex-ShareX Users.
 
 ## Features
 * Takes screenshots
-* Uploads to ~~Twitter, Mastodon~~, XBackbone, and Imgur
+* Uploads to ~~Twitter, Mastodon~~, XBackbone, Google Cloud Storage, and Imgur
 * Saves screenshots to your Pictures
 * Notifications
-* ~~GTK Dialog for entering a message with a tweet or toot~~ Planning to be re-written with Qt.
+* ~~GTK Dialog for entering a message with a tweet or toot~~ Planning to be re-written with [fltk-rs](https://crates.io/crates/fltk).
 
 ## Desktop support
 - GNOME desktop **(with `gnome-screenshot`)**

@@ -7,6 +7,12 @@ pub mod clipboard;
 pub mod notification;
 pub mod msgbox;
 pub mod action;
+pub mod gui;
+pub trait GUIChoice {
+    fn populate_choice(control: &mut fltk::menu::Choice);
+    fn from_choice(control: &mut fltk::menu::Choice) -> Self;
+    fn select_choice(&self, choice: &mut fltk::menu::Choice);
+}
 
 use config::PostUploadAction;
 use serde::{Serialize, Deserialize};

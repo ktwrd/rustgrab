@@ -1,10 +1,15 @@
+use std::fmt;
 use screenshot_rs::ScreenshotKind;
 use serde::{Deserialize, Serialize};
-use crate::locale;
-use crate::LError as LError;
-use crate::helper;
+use crate::{
+    impl_choice_populate,
+    locale,
+    helper,
+    GUIChoice,
+    LError};
 use rand::{distributions::Alphanumeric, Rng};
-
+use strum_macros::EnumIter;
+use strum::IntoEnumIterator;
 pub const DEFAULT_SCREENSHOT_ACTION: &str = "area";
 pub const FILENAME_FORMAT_DEFAULT: &str = "%Y%m%d_%H-%H-%M.png";
 pub const LOCATION_ROOT_DEFAULT: &str = "home.pictures";
@@ -15,7 +20,12 @@ pub enum UserConfigKeyword {
     BasePath,
     FinalPath
 }
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+
+
+/* ================================
+ * ImageTarget
+ */
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumIter, PartialEq)]
 pub enum ImageTarget {
     /// src/handler/filesystem.rs
     Filesystem,
@@ -27,20 +37,39 @@ pub enum ImageTarget {
     /// todo: not tested. src/handler/imgur.rs
     Imgur,
 
-    /// todo
+    /// src/handler/gcs.rs
     GoogleCloudStorage,
     /// todo
     AWS,
     /// src/handler/xbackbone.rs
     XBackbone
 }
+impl fmt::Display for ImageTarget {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            ImageTarget::Filesystem => write!(f, "Filesystem"),
+            ImageTarget::Twitter => write!(f, "Twitter"),
+            ImageTarget::Mastodon => write!(f, "Mastodon"),
+            ImageTarget::Imgur => write!(f, "Imgur"),
+            ImageTarget::GoogleCloudStorage => write!(f, "Google Cloud Storage"),
+            ImageTarget::AWS => write!(f, "AWS S3"),
+            ImageTarget::XBackbone => write!(f, "XBackbone")
+        }
+    }
+}
 impl Default for ImageTarget {
     fn default() -> Self {
         ImageTarget::Filesystem
     }
 }
+impl_choice_populate!(ImageTarget);
+
+
+/* ================================
+ * PostTargetAction
+ */
 /// Action that happens after the Image target is successful.
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumIter, PartialEq)]
 pub enum PostTargetAction {
     CopyLocation,
     CopyContent,
@@ -51,9 +80,24 @@ impl Default for PostTargetAction {
         PostTargetAction::CopyLocation
     }
 }
+impl fmt::Display for PostTargetAction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            PostTargetAction::CopyLocation => write!(f, "Copy Location/URL"),
+            PostTargetAction::CopyContent => write!(f, "Copy Content"),
+            PostTargetAction::ShortenLocation => write!(f, "Shorten then Copy URL")
+        }
+    }
+}
+impl_choice_populate!(PostTargetAction);
+
+
+/* ================================
+ * PostUploadAction
+ */
 /// Action that is ran after the file has been uploaded.
 /// This will be ignored when ImageTarget::FileSystem target is used.
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumIter, PartialEq)]
 pub enum PostUploadAction {
     CopyLink,
     ShortenLink
@@ -63,8 +107,21 @@ impl Default for PostUploadAction {
         PostUploadAction::CopyLink
     }
 }
+impl fmt::Display for PostUploadAction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            PostUploadAction::CopyLink => write!(f, "Copy URL"),
+            PostUploadAction::ShortenLink => write!(f, "Shorten URL"),
+        }
+    }
+}
+impl_choice_populate!(PostUploadAction);
+
+/* ================================
+ * TargetAction
+ */
 /// What action should be taken.
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumIter, PartialEq)]
 pub enum TargetAction {
     Screenshot,
     Upload
@@ -74,6 +131,53 @@ impl Default for TargetAction {
         TargetAction::Screenshot
     }
 }
+impl fmt::Display for TargetAction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:#?}", self)
+    }
+}
+impl_choice_populate!(TargetAction);
+
+
+
+
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, EnumIter, PartialEq)]
+pub enum LScreenshotType {
+    Area,
+    Window,
+    Full
+}
+impl From<ScreenshotKind> for LScreenshotType {
+    fn from(kind: ScreenshotKind) -> Self {
+        match kind {
+            ScreenshotKind::Area => Self::Area,
+            ScreenshotKind::Window => Self::Window,
+            ScreenshotKind::Full => Self::Full
+        }
+    }
+}
+impl Default for LScreenshotType {
+    fn default() -> Self {
+        Self::Area
+    }
+}
+impl fmt::Display for LScreenshotType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:#?}", self)
+    }
+}
+impl LScreenshotType {
+    pub fn to(&self) -> ScreenshotKind {
+        match self {
+            Self::Area => ScreenshotKind::Area,
+            Self::Window => ScreenshotKind::Window,
+            Self::Full => ScreenshotKind::Full
+        }
+    }
+}
+impl_choice_populate!(LScreenshotType);
+
+
 /// Try and parse UserConfig.default_screenshot_type
 pub fn parse_screenshot_action(action: String) -> Result<ScreenshotKind, LError>
 {
@@ -105,8 +209,8 @@ pub struct UserConfig {
     #[serde(default)]
     pub default_action: TargetAction,
     /// Default action that is used when no screenshot kind is provided via the CLI.
-    #[serde(default = "get_default_screenshot_type")]
-    pub default_screenshot_type: String,
+    #[serde(default)]
+    pub default_screenshot_type: LScreenshotType,
 
     /// Default image/upload target when taking a screenshot or uploading a file.
     #[serde(default)]
@@ -129,7 +233,6 @@ pub struct UserConfig {
     pub imgur_config: Option<crate::handler::imgur::ImgurConfig>,
     pub gcs_config: Option<crate::handler::gcs::GCSConfig>
 }
-fn get_default_screenshot_type() -> String { kind_to_string(ScreenshotKind::Area) }
 fn get_default_filename_format() -> String { FILENAME_FORMAT_DEFAULT.to_string() }
 fn get_default_location_format() -> String { LOCATION_FORMAT_DEFAULT.to_string() }
 fn get_default_location_root() -> String { LOCATION_ROOT_DEFAULT.to_string() }
@@ -138,7 +241,7 @@ impl UserConfig {
     pub fn new() -> Self {
         Self {
             default_action: TargetAction::default(),
-            default_screenshot_type: get_default_screenshot_type(),
+            default_screenshot_type: LScreenshotType::default(),
             default_target: ImageTarget::default(),
             post_target_action: PostTargetAction::default(),
             post_upload_action: PostUploadAction::default(),
@@ -148,6 +251,21 @@ impl UserConfig {
             xbackbone_config: None,
             imgur_config: None,
             gcs_config: None
+        }
+    }
+
+    /// Write this instance to the location of `Self::get_config_location()`
+    pub fn write(&self) -> Result<(), LError> {
+        let location = Self::get_config_location();
+        let data = match serde_json::to_string_pretty(&self) {
+            Ok(v) => v,
+            Err(e) => {
+                return Err(LError::Json(e));
+            }
+        };
+        match std::fs::write(&location, &data) {
+            Ok(_) => Ok(()),
+            Err(e) => Err(LError::ConfigIOError(e, location))
         }
     }
 
