@@ -257,7 +257,7 @@ impl UserConfig {
     /// Write this instance to the location of `Self::get_config_location()`
     pub fn write(&self) -> Result<(), LError> {
         let location = Self::get_config_location();
-        let data = match serde_json::to_string(&self) {
+        let data = match serde_json::to_string_pretty(&self) {
             Ok(v) => v,
             Err(e) => {
                 return Err(LError::Json(e));
