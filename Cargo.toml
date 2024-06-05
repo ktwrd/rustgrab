@@ -42,7 +42,7 @@ async-stream = "0.3.5"
 tokio-util = { version= "0.7.11", features = ["io"] }
 indicatif = "0.17.8"
 
-fltk = "1.4.30"
+fltk = { version = "1.4.30", features = ["fltk-bundled"] }
 lazy_static = "1.4.0"
 strum = "0.26.2"
 strum_macros = "0.26.3"
