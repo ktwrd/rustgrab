@@ -45,6 +45,7 @@ fn init() {
     if let Ok(mut ui) = CURRENT_UI.write() {
         ui.win.make_resizable(false);
         ui.win.show();
+        crate::gui::window_centre_screen(&mut ui.win);
         ui.win.handle(move |w, ev| match ev {
             enums::Event::Resize => {
                 if w.width() > 640 || w.height() > 270 {
