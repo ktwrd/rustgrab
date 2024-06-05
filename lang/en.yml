@@ -114,4 +114,4 @@ Help:
             Init: Initialize configuration for rustgrab. Will override your current config!!
             Location: Display the current location for your config file.
             Open: Open your config file in your default JSON editor.
-            GUI: Show the GUI Interface for editing your config file.
+            GUI: Show the GUI Interface for editing your config file. (default)
