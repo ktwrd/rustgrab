@@ -155,6 +155,7 @@ pub fn get_theme() -> (ColorTheme, WidgetTheme) {
     }
 }
 
+/// Make the `window` provided the in be the center of the current screen.
 pub fn window_centre_screen(window: &mut Window) {
     let (sx, sy) = fltk::app::screen_coords();
     let width = window.width();
