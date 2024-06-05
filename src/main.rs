@@ -68,6 +68,8 @@ async fn main() {
                     .about(locale.action_config_open.clone()))
                 .subcommand(Command::new("location")
                     .about(locale.action_config_location.clone()))
+                .subcommand(Command::new("gui")
+                    .about(locale.action_config_gui.clone()))
         )
         .subcommand(
             Command::new("devtest")
@@ -122,12 +124,15 @@ async fn main() {
                 Some("init") => rustgrab::action::config::init().await,
                 Some("open") => rustgrab::action::config::open().await,
                 Some("location") => rustgrab::action::config::display_location().await,
-                _ => println!("Unknown subcommand")
+                Some("gui") => rustgrab::gui::config::run(),
+                _ => {
+                    println!("No sub-sub command was provided, displaying GUI!");
+                    rustgrab::gui::config::run();
+                }
             }
         },
         Some(("devtest", dt_matches)) => {
             match dt_matches.subcommand_name() {
-                Some("cfg_gui") => rustgrab::gui::config::run(),
                 _ => panic!("no sub-command or invalid subcommand")
             }
         }

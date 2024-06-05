@@ -19,7 +19,8 @@ pub struct LocaleValues {
     pub action_config: String,
     pub action_config_init: String,
     pub action_config_location: String,
-    pub action_config_open: String
+    pub action_config_open: String,
+    pub action_config_gui: String
 }
 fn try_get_yaml(data: &Yaml, failover: &str) -> String {
     data.as_str().unwrap_or(failover).to_string()
@@ -45,7 +46,8 @@ impl LocaleValues {
             action_config: String::new(),
             action_config_init: String::new(),
             action_config_location: String::new(),
-            action_config_open: String::new()
+            action_config_open: String::new(),
+            action_config_gui: String::new()
         }
     }
     pub fn generate(&mut self) -> &mut Self
@@ -70,6 +72,7 @@ impl LocaleValues {
         self.action_config_init = try_get_yaml(&locator["Action"]["Config"]["Init"], "<config init action>");
         self.action_config_location = try_get_yaml(&locator["Action"]["Config"]["Location"], "<config location action>");
         self.action_config_open = try_get_yaml(&locator["Action"]["Config"]["Open"], "<open config>");
+        self.action_config_gui = try_get_yaml(&locator["Action"]["Config"]["GUI"], "<show gui>");
         self
     }
 }
