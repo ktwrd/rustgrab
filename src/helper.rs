@@ -27,12 +27,12 @@ pub fn get_default_base_path() -> Result<PathBuf, LError> {
 pub fn base_path_from_config(location_root: String) -> Result<PathBuf, crate::helper::LError> {
     let default_location = get_default_base_path()?;
 
-    let base: Option<PathBuf> = match location_root.as_str() {
+    let base: Option<PathBuf> = match location_root.clone().as_str() {
         "home" => Some(glib::home_dir()),
         "home.desktop" => user_special_dir(UserDirectory::Desktop),
         "home.pictures" => user_special_dir(UserDirectory::Pictures),
         "home.documents" => user_special_dir(UserDirectory::Documents),
-        _ => Some(default_location.clone())
+        _ => Some(PathBuf::from(location_root.clone()))
     };
     match base {
         Some(v) => Ok(v),
