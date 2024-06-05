@@ -76,9 +76,17 @@ Once you've modified your config, you can now change your default target to `Goo
 When changes have been made to the locale files, run `generate_include.js` in the locale folder. This will generate `src/locale_content.rs`.
 
 # Changelog
+#### [0.8] - 2024-06-05
+- Add GUI for editing `~/.config/rustgrab/config.json`. Made with [fltk-rs](https://crates.io/crates/fltk).
+- Add ability to write to the config file.
+- Remove dependency `egui`
+- Set the content type when uploading files to Google Cloud Storage and XBackbone.
+- ***Breaking Change***
+  * Change Type of `default_screenshot_type` in `UserConfig` to `LScreenshotType`
+
 #### [0.7.7] - 2024-05-18
 - Update localization files
-- Fix <br> being shown in message boxes
+- Fix \<br> being shown in message boxes
 - Fix error messages not being displayed properly in message boxes
 - Move logic for including localization files to it's own file.
 
