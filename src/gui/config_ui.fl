@@ -8,14 +8,14 @@ class ConfigUserInterface {open
   } {
     Fl_Window win {
       label {rustgrab - Config} open
-      xywh {2751 917 640 270} type Double color 55 non_modal visible
+      xywh {2716 537 640 270} type Double color 55 align 0 non_modal visible
     } {
       Fl_Tabs tabs {open
-        xywh {2 2 636 240} box GTK_UP_BOX color 55 selection_color 52 labeltype NO_LABEL
+        xywh {2 2 636 240} box UP_BOX color 55 selection_color 52 labeltype NO_LABEL
       } {
         Fl_Scroll page_general {
-          label General open selected
-          xywh {2 30 638 212} color 52 selection_color 48
+          label General open
+          xywh {4 32 632 208} color 52 selection_color 48 hide
         } {
           Fl_Input input_filename_format {
             label {Filename Format}
@@ -36,7 +36,7 @@ class ConfigUserInterface {open
         }
         Fl_Scroll page_defaults {
           label Defaults open
-          xywh {0 30 638 212} color 52 selection_color 48 hide
+          xywh {4 32 632 208} color 52 selection_color 48 hide
         } {
           Fl_Choice choice_default_action {
             label Action open
@@ -61,7 +61,7 @@ class ConfigUserInterface {open
         }
         Fl_Scroll page_xbackbone {
           label XBackbone open
-          xywh {0 30 638 212} color 52 selection_color 48 hide
+          xywh {4 32 632 208} color 52 selection_color 48 hide
         } {
           Fl_Input input_xbackbone_url {
             label URL
@@ -77,8 +77,8 @@ class ConfigUserInterface {open
           }
         }
         Fl_Scroll page_gcs {
-          label {Google Cloud Storage} open
-          xywh {0 30 638 212} color 52 selection_color 48 hide
+          label {Google Cloud Storage} open selected
+          xywh {4 32 632 208} color 52 selection_color 48
         } {
           Fl_Check_Button cb_gcs_use_default_auth {
             label {Use Default Auth}
