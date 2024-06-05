@@ -254,6 +254,21 @@ impl UserConfig {
         }
     }
 
+    /// Write this instance to the location of `Self::get_config_location()`
+    pub fn write(&self) -> Result<(), LError> {
+        let location = Self::get_config_location();
+        let data = match serde_json::to_string(&self) {
+            Ok(v) => v,
+            Err(e) => {
+                return Err(LError::Json(e));
+            }
+        };
+        match std::fs::write(&location, &data) {
+            Ok(_) => Ok(()),
+            Err(e) => Err(LError::ConfigIOError(e, location))
+        }
+    }
+
     /// Get the home directory.
     /// Returns OK with an empty string when PathBuf::to_str() returns None
     /// Returns Err when homedir::get_my_home() OK is None, or is Err
