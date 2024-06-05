@@ -32,10 +32,7 @@ pub fn run() {
 /// Window icon for ConfigUserInterface as PNG.
 pub const WINDOW_ICON: &[u8] = include_bytes!("config_ui.png");
 fn init() {
-    let app = app::App::default();
-    let (ct, wt) = crate::gui::get_theme();
-    ct.apply();
-    wt.apply();
+    let app = app::App::default().with_scheme(app::AppScheme::Gtk);
     let (send_action, receive_action) = app::channel::<Status>();
     let cfg_data = match std::path::Path::new(&UserConfig::get_config_location()).exists() {
         true => UserConfig::parse().expect("Failed to read config"),
@@ -50,8 +47,8 @@ fn init() {
         ui.win.show();
         ui.win.handle(move |w, ev| match ev {
             enums::Event::Resize => {
-                if w.width() > 640 || w.height() > 260 {
-                    w.set_size(640, 260);
+                if w.width() > 640 || w.height() > 270 {
+                    w.set_size(640, 270);
                 }
                 true
             },
