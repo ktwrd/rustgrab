@@ -111,8 +111,20 @@ fn tab_general_init() {
         fltk_set_lazystatic!(ui, input_location_format, CURRENT_CONFIG, location_format, tab_general_reset);
         fltk_set_lazystatic!(ui, input_root_directory, CURRENT_CONFIG, location_root, tab_general_reset);
         ui.btn_root_directory.set_callback(move |_| {
-            panic!("[btn_root_directory] work in progress");
+            btn_root_directory_click();
         });
+    }
+}
+fn btn_root_directory_click() {
+    if let Some(file) = dialog::dir_chooser("Select Root Directory", "", true) {
+        let fixed = std::fs::canonicalize(&file).unwrap();
+        let fixed_str = fixed.to_str().unwrap_or("");
+        if let Ok(mut x) = CURRENT_CONFIG.write() {
+            x.location_root = fixed_str.to_string();
+        }
+        tab_general_reset();
+    } else {
+        println!("[btn_root_directory_click] operation aborted by user");
     }
 }
 fn tab_general_reset() {
