@@ -227,6 +227,9 @@ fn tab_gcs_init() {
             }
             tab_gcs_reset();
         });
+        ui.btn_gcs_auth_cfg_location.set_callback(move |_| {
+            btn_gcs_auth_cfg_location_click();
+        });
     }
 }
 fn tab_gcs_reset() {
@@ -243,5 +246,20 @@ fn tab_gcs_reset() {
             ui.input_gcs_public_url_base.set_value(&gcs_cfg.clone().public_url_base.unwrap_or("".to_string()));
             ui.cb_gcs_public_url_base.set_value(gcs_cfg.clone().public_url_base.is_some());
         }
+    }
+}
+pub fn btn_gcs_auth_cfg_location_click() {
+    if let Some(file) = dialog::file_chooser("Select Google Cloud Auth Config Location", "*.json", ".", true) {
+        let fixed = std::fs::canonicalize(&file).unwrap();
+        let fixed_str = fixed.to_str().unwrap_or("");
+        if let Ok(mut x) = CURRENT_CONFIG.write() {
+            let mut gcs = x.gcs_config.clone().unwrap_or_else(|| GCSConfig::default());
+            gcs.auth_cfg_location = Some(fixed_str.to_string());
+            gcs.use_default = false;
+            x.gcs_config = Some(gcs);
+        }
+        tab_gcs_reset();
+    } else {
+        println!("[btn_gcs_auth_cfg_location_click] operation aborted by user");
     }
 }
