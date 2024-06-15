@@ -38,6 +38,31 @@ Screenshot handling is done with [screenshot-rs](https://crates.io/crates/screen
 
 ## How to Use
 
+Make sure that FLTK and it's dependencies are installed;
+```bash
+sudo apt update
+sudo apt-get install -y \
+    g++ \
+    gdb \
+    git \
+    make \
+    cmake \
+    autoconf \
+    libx11-dev \
+    libglu1-mesa-dev \
+    libxft-dev \
+    libxcursor-dev \
+    libasound2-dev \
+    freeglut3-dev \
+    libcairo2-dev \
+    libfontconfig1-dev \
+    libglew-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libpango1.0-dev \
+    libxinerama-dev;
+```
+
 ### Google Cloud Storage
 To use the Google Cloud Storage target, you must have the following;
 - `gcloud` CLI installed
